@@ -223,6 +223,7 @@
 //Called when a sawblade is launched in remote control mode
 /obj/item/projectile/sawblade/proc/control_launched(var/obj/item/weapon/gun/projectile/ripper/gun)
 	launcher = gun //Register the ripper
+	alpha = default_alpha	//The projectile becomes visible now, when its ready to start moving
 	if (launcher)
 		pixel_click = launcher.last_clickpoint //Grab an initial clickpoint so that we don't fly towards world zero
 	remote_controlled = TRUE //Set this flag
@@ -296,6 +297,7 @@
 			//We want the animation to finish first though so lets spawn it
 			spawn(tick_interval SECONDS)
 				set_global_pixel_loc(get_global_pixel_loc()) //This will move us into the tile while maintaining our global pixel coords
+
 
 	animate(src, pixel_x = newpix.x, pixel_y = newpix.y)
 
