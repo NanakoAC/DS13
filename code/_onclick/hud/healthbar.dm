@@ -306,14 +306,14 @@
 	.=..()
 	head_health = parent.total_health
 	animate_time = (1 SECOND / ticks_per_second)
-	health_per_tick = (parent.total_health * 0.065)/ticks_per_second
+	health_per_tick = (parent.total_health * 0.085)/ticks_per_second
 
 
 /obj/screen/healthbar_component/delta/update_total()
 	head_health = parent.current_health
 	animate_time = (1 SECOND / ticks_per_second)
 	alpha = 0
-	health_per_tick = (parent.total_health * 0.1)/ticks_per_second
+	health_per_tick = (parent.total_health * 0.085)/ticks_per_second
 
 //Delta works very differently
 /obj/screen/healthbar_component/delta/proc/update()
