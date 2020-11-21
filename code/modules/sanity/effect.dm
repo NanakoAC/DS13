@@ -41,13 +41,23 @@
 	It does not affect which effects the victim is eligible for, and the total quantity of reserved insanity can become higher than
 	the actual amount of insanity.
 	See check.dm for more detail
+
+
+	required_insanity:
+	The hard minimum insanity (calculated after subtracting courage) that is required to qualify for this effect.
+	If you have less than this, it is not valid
 */
 #define REFERENCE	"reference"
 /datum/extension/sanity_effect
 	expected_type = /mob/living/carbon/human
+	base_type = /datum/extension/sanity_effect //Used for startup filtering
 	flags = EXTENSION_FLAG_IMMEDIATE
 
+	var/required_insanity = SANITY_TIER_MINOR
+	var/reserve = SANITY_RESERVE_MINOR
+
 	var/reference = FALSE	//If true, this doesnt have a holder and exists in a list for checking
+	var/currently_active = FALSE	//Is this currently applied to a mob and doing things?
 
 	var/instant = FALSE		//Will apply and trigger in the same frame
 
@@ -70,5 +80,48 @@
 
 
 //This isnt the same as atom initialize, it could have any mixture of input parameters, override it and set what's expected
-/datum/extension/sanity_effect/Initialize()
+/datum/extension/sanity_effect/proc/Initialize()
 	.=..()
+
+
+
+/*
+	Safety Checks. Both of these must return one of the following
+	CHECK_NEVER
+	CHECK_INVALID
+	CHECK_NOT_IDEAL
+	CHECK_IDEAL
+*/
+/*
+	Can this be applied to the target mob?
+	If this returns
+	CHECK_NEVER
+	CHECK_INVALID
+
+	Then the affect will not be applied, no distinction between them
+
+	If this returns CHECK_NOT_IDEAL, it may not be applied, depending on whether other effects are more ideal
+*/
+/datum/extension/sanity_effect/proc/can_apply(var/mob/living/carbon/human/victim)
+	return CHECK_IDEAL
+
+
+
+/*
+	Once applied, can this effect start doing its thing?
+	In the case of instant effects, this is called at the same time as can_apply, and has the same consequences as described above
+
+	If this returns
+	CHECK_NEVER after already being applied, the effect will be removed
+
+	If this returns
+	CHECK_INVALID after already being applied, it will not trigger right now, but try again later
+
+	If this returns
+	CHECK_NOT_IDEAL
+	CHECK_IDEAL
+	After already being applied, then it will trigger, theres no distinction between them
+
+*/
+/datum/extension/sanity_effect/proc/can_trigger(var/mob/living/carbon/human/victim)
+	return CHECK_IDEAL

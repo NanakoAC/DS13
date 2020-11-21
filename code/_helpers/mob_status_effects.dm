@@ -52,3 +52,21 @@
 		O.rejuvenate()
 
 	shock_stage = 0
+
+
+
+
+/*
+	Closing Eyes
+	Does a fullscreen effect and then blacks out the screen for some time
+*/
+/mob/proc/close_eyes_for(var/duration, var/over_hud, var/fast)
+	if (get_extension(src, /datum/extension/eyeclose))
+		return
+	set_extension(src, /datum/extension/eyeclose, duration, over_hud, fast)
+
+
+/datum/extension/eyeclose
+	var/status = 0	//0: Closing, 1: Closed, 2: opening
+
+/datum/extension/eyeclose/New(var/mob/user, var/duration, var/over_hud, var/fast)

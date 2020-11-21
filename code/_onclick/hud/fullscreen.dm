@@ -161,7 +161,7 @@
 //-------------------------
 /obj/screen/fullscreen/blackout
 	icon = 'icons/mob/screen1.dmi'
-	icon_state = "black"
+	icon_state = "blackout"
 	screen_loc = "WEST,SOUTH to EAST,NORTH"
 	layer = DAMAGE_LAYER
 	small_icon = TRUE

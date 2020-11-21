@@ -22,6 +22,10 @@ var/global/list/playable_species = list(SPECIES_HUMAN)    // A list of ALL playa
 
 var/list/mannequins_
 
+//Sanity
+GLOBAL_LIST_EMPTY(all_sanity_effects)
+
+
 // Grabs
 var/global/list/all_grabstates[0]
 var/global/list/all_grabobjects[0]
@@ -114,6 +118,16 @@ var/global/list/string_slot_flags = list(
 	for(var/path in paths)
 		var/datum/sprite_accessory/hair/H = new path()
 		GLOB.hair_styles_list[H.name] = H
+
+
+	//Sanity - Initialise all /datum/extension/sanity_effect into an assoc list keyed by reference, with value as the minimum cost
+	paths = typesof(/datum/extension/sanity_effect)
+	for(var/path in paths)
+		var/datum/extension/sanity_effect/S = new path(REFERENCE)
+		GLOB.all_sanity_effects[S] = S.required_insanity
+
+	//These must be sorted in descending order
+	sortTim(GLOB.all_sanity_effects, /proc/cmp_numeric_dsc, TRUE)
 
 	//Facial Hair - Initialise all /datum/sprite_accessory/facial_hair into an list indexed by facialhair-style name
 	paths = typesof(/datum/sprite_accessory/facial_hair) - /datum/sprite_accessory/facial_hair
