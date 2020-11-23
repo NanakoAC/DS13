@@ -214,6 +214,7 @@ What is the naming convention for planes or layers?
 	#define HUD_ABOVE_ITEM_LAYER 3
 	#define HUD_TEXT_LAYER 4
 
+#define ABOVE_HUD_PLANE                       6
 
 //This is difference between highest and lowest visible
 #define PLANE_DIFFERENCE              22
@@ -258,3 +259,5 @@ GLOBAL_LIST_INIT(ghost_master, list(
 	new /obj/screen/plane_master/ghost_master(),
 	new /obj/screen/plane_master/ghost_dummy()
 ))
+
+

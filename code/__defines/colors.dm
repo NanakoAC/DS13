@@ -106,4 +106,98 @@
 
 #define COLOR_OOC	"#960018"
 
+//These three are components of the luminance vector, a thing used in color matrices
+//I don't honestly know what they actually stand for, other than that the first letters are red, green, blue
+#define RWGT	0.3086
+#define GWGT	0.6094
+#define BWGT	0.0820
+
 #define RANDOM_RGB rgb(rand(0,255), rand(0,255), rand(0,255))
+
+/obj/colorscrew
+	plane = OBJ_PLANE
+	screen_loc = "1,1"
+	appearance_flags = PLANE_MASTER | NO_CLIENT_COLOR
+	blend_mode = BLEND_OVERLAY
+
+/obj/colorscrew/Initialize()
+	set waitfor = FALSE
+	.=..()
+
+	while (TRUE)
+		//This raises brightness i guess
+		var/saturation = rand_between(0, 4)
+		filters = filter(type="blur", size=saturation)
+		world << "Set saturation to [saturation]"
+		sleep(20)
+
+/obj/colorscrew_two
+	plane = ABOVE_HUD_PLANE
+	icon = 'icons/mob/screen1.dmi'
+	screen_loc = "WEST,SOUTH to EAST,NORTH"
+	icon_state = "grey"
+	appearance_flags = NO_CLIENT_COLOR
+	blend_mode = BLEND_OVERLAY
+	var/client/C
+
+/obj/colorscrew_two/New(var/thing)
+	world << "New screenthing [thing]"
+	C = thing
+	.=..()
+
+/obj/colorscrew_two/Initialize()
+	set waitfor = FALSE
+	.=..()
+
+	alpha = 128
+	while (TRUE)
+		//This raises brightness i guess
+		var/saturation = rand_between(0, 4)
+		filters = filter(type="blur", size=saturation)
+		world << "Set saturation to [saturation]"
+		sleep(20)
+
+
+
+
+/obj/colorscrew_three
+	plane = ABOVE_HUD_PLANE
+	//icon = 'icons/mob/screen1.dmi'
+	screen_loc = "WEST,SOUTH to EAST,NORTH"
+	//icon_state = "grey"
+	//appearance_flags = NO_CLIENT_COLOR
+	blend_mode = BLEND_OVERLAY
+	var/client/C
+
+/obj/colorscrew_three/New(var/thing)
+	world << "New screenthing [thing]"
+	C = thing
+	.=..()
+
+/obj/colorscrew_three/Initialize()
+	set waitfor = FALSE
+	.=..()
+
+	while (TRUE)
+		//This raises brightness i guess
+		var/saturation = rand_between(-4, 4)
+		C.color = get_saturation_matrix(saturation)
+		sleep(20)
+
+
+
+/client/verb/colorscrew()
+	set name = "colorscrew"
+
+	screen += new /obj/colorscrew(src)
+
+
+/client/verb/colorscrew_two()
+	set name = "colorscrew 2"
+
+	screen += new /obj/colorscrew_two(src)
+
+/client/verb/colorscrew_three()
+	set name = "colorscrew 3"
+
+	screen += new /obj/colorscrew_three(src)

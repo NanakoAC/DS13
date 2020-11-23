@@ -966,3 +966,24 @@ proc/generate_image(var/tx as num, var/ty as num, var/tz as num, var/range as nu
 /mob/living/carbon/human/get_icon_size()
 	var/icon/I = new(species.icon_template)
 	return get_new_vector(I.Width(), I.Height())
+
+
+
+/*
+	Takes a saturation multiplier.
+	0 = greyscale
+	1 = normal
+	Above 1: higher saturation
+	Returns a color matrix which will set saturation to that percentage
+	Negative saturation can also be used to make complementary colors
+*/
+/proc/get_saturation_matrix(var/saturation)
+	return list((1-saturation)*RWGT+saturation,
+	(1-saturation)*RWGT,
+	(1-saturation)*RWGT,
+	(1-saturation)*GWGT,
+	(1-saturation)*GWGT+saturation,
+	(1-saturation)*GWGT,
+	(1-saturation)*BWGT,
+	(1-saturation)*BWGT,
+	(1-saturation)*BWGT+saturation)
