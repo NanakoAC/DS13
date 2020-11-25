@@ -112,6 +112,8 @@
 			if (CHECK_NOT_IDEAL)
 				not_ideal = TRUE
 
+			//Ideal and prevented are both treated the same here, considered a full success for this purpose
+
 
 		//Secondly, if its instant we need to also check can_trigger
 		if (candidate.instant && !failed)
@@ -121,6 +123,8 @@
 					failed = TRUE
 				if (CHECK_NOT_IDEAL)
 					not_ideal = TRUE
+
+				//Ideal and prevented are both treated the same here, considered a full success for this purpose
 
 
 		//Now lets check the compiled results

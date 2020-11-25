@@ -83,6 +83,10 @@
 /datum/extension/sanity_effect/proc/Initialize()
 	.=..()
 
+	//Even though safety checks were done, we redo them anyways in the case of CHECK_PREVENTED
+	if (instant)
+		attempt_trigger()
+
 
 
 /*
@@ -125,3 +129,15 @@
 */
 /datum/extension/sanity_effect/proc/can_trigger(var/mob/living/carbon/human/victim)
 	return CHECK_IDEAL
+
+
+/*
+	Triggering
+*/
+/datum/extension/sanity_effect/proc/attempt_trigger()
+	var/safety = can_trigger(holder)
+	if (safety == CHECK_NOT_IDEAL || safety == CHECK_IDEAL)
+		trigger()
+
+//Actually do things!
+/datum/extension/sanity_effect/proc/trigger()

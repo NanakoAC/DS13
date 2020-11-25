@@ -77,6 +77,10 @@
 		if(!client && !mind)
 			species.handle_npc(src)
 
+		//Insanity ticks once per minute
+		else if (insanity && ((life_tick % 60) == 0))
+			species.handle_sanity(src)
+
 
 	if(!handle_some_updates())
 		return											//We go ahead and process them 5 times for HUD images and other stuff though.
