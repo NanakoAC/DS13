@@ -6,7 +6,7 @@
 	if (incapacitated(INCAPACITATION_KNOCKOUT))
 		return
 
-	do_shout(SOUND_SHOUT)
+	do_shout(SOUND_SHOUT, sanity_damage = 5)
 
 
 //Simple ability that makes a louder screaming noise, causes more screenshake in everyone nearby.
@@ -17,12 +17,15 @@
 	if (incapacitated(INCAPACITATION_KNOCKOUT))
 		return
 
-	do_shout(SOUND_SHOUT_LONG)
+	do_shout(SOUND_SHOUT_LONG, sanity_damage = 8)
 
 
 
-/mob/proc/do_shout(var/sound_type, var/do_stun = TRUE)
+/mob/proc/do_shout(var/sound_type, var/do_stun = TRUE, var/sanity_damage = 5)
 	if (check_audio_cooldown(sound_type))
+		var/file = get_species_audio(sound_type)
+		audible_sanity_damage(quantity = sanity_damage, var/limit = 0, var/override_source = null,  var/reason = "spooky things", var/list/sound_parameters)
+
 		if (play_species_audio(src, sound_type, VOLUME_HIGH, 1, 2))
 			if (do_stun)
 				src.Stun(1)

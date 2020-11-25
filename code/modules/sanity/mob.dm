@@ -80,3 +80,16 @@
 
 	//TODO: Update the log with source/reason, updating an existing entry if possible before creating anew
 	//Possible future TODO: Trigger an observation indicating sanity was gained
+
+/*
+	Can this mob recieve insanity and be subjected to sanity effects?
+*/
+/mob/proc/has_sanity()
+	return FALSE	//human only
+
+/mob/living/carbon/human/proc/has_sanity()
+	var/datum/species/S = H.get_brain_species()
+	if (!S || !S.has_sanity)
+		return FALSE
+
+	return TRUE

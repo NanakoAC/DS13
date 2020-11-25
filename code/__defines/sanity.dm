@@ -14,3 +14,6 @@
 
 //Baseline probability of getting a sanity effect at each check, in addition to calculations
 #define SANITY_PROBABILITY_BASE	3
+
+//Cap on sanity damage from active shouts from necromorphs
+#define SANITY_CAP_SHOUT	300

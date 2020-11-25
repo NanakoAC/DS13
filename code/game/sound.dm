@@ -83,6 +83,34 @@ GLOBAL_LIST_INIT(bubble_small_sound,list('sound/machines/tanksmallbubble1.ogg','
 			if(T && T.z == turf_source.z && (!is_ambiance || M.get_preference_value(/datum/client_preference/play_ambiance) == GLOB.PREF_YES))
 				M.playsound_local(turf_source, soundin, vol, vary, frequency, falloff, is_global, extrarange)
 
+//Just like above, but returns a list of the mobs who hear, and the volume they heard it at
+/proc/play_metered_sound(var/atom/source, soundin, vol as num, vary, extrarange as num, falloff, var/is_global, var/frequency, var/is_ambiance = 0)
+	var/list/hearers = list()
+	if(istext(soundin))
+		soundin = get_sfx(soundin) // same sound for everyone
+
+	if(isarea(source))
+		error("[source] is an area and is trying to make the sound: [soundin]")
+		return
+	frequency = vary && isnull(frequency) ? get_rand_frequency() : frequency // Same frequency for everybody
+	var/turf/turf_source = get_turf(source)
+
+ 	// Looping through the player list has the added bonus of working for mobs inside containers
+	for (var/P in GLOB.player_list)
+		var/mob/M = P
+		if(!M || !M.client)
+			continue
+		if(get_dist(M, turf_source) <= (world.view + extrarange) * 2)
+			var/turf/T = get_turf(M)
+			if(T && T.z == turf_source.z && (!is_ambiance || M.get_preference_value(/datum/client_preference/play_ambiance) == GLOB.PREF_YES))
+				var/heard_volume = M.playsound_local(turf_source, soundin, vol, vary, frequency, falloff, is_global, extrarange)
+				if (heard_volume)
+					hearers[M] = heard_volume
+
+	return hearers
+
+
+
 var/const/FALLOFF_SOUNDS = 0.5
 
 /mob/proc/playsound_local(var/turf/turf_source, soundin, vol as num, vary, frequency, falloff, is_global, extrarange)
@@ -166,6 +194,8 @@ var/const/FALLOFF_SOUNDS = 0.5
 			S.environment = A.sound_env
 
 	src << S
+	//Return the final volume we played at, this may be useful
+	return vol
 
 
 

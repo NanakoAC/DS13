@@ -223,8 +223,6 @@
 	var/gluttonous                // Can eat some mobs. Values can be GLUT_TINY, GLUT_SMALLER, GLUT_ANYTHING, GLUT_ITEM_TINY, GLUT_ITEM_NORMAL, GLUT_ITEM_ANYTHING, GLUT_PROJECTILE_VOMIT
 	var/stomach_capacity = 5      // How much stuff they can stick in their stomach
 	var/rarity_value = 1          // Relative rarity/collector value for this species.
-	                              // Determines the organs that the species spawns with and
-
 	var/vision_organ              // If set, this organ is required for vision. Defaults to "eyes" if the species has them.
 	var/breathing_organ           // If set, this organ is required for breathing. Defaults to "lungs" if the species has them.
 	var/can_vomit = TRUE		//Whether this mob can vomit, added to disable it on necromorphs
@@ -232,6 +230,11 @@
 	var/obj/effect/decal/cleanable/blood/tracks/move_trail = /obj/effect/decal/cleanable/blood/tracks/footprints // What marks are left when walking
 
 	var/list/skin_overlays = list()
+
+
+
+	// Mental/sanity vars
+	var/has_sanity = TRUE	//If true, this species can gain insanity
 
 
 
@@ -971,10 +974,7 @@ The slots that you can use are found in items_clothing.dm and are the inventory 
 /datum/species/proc/get_ability_descriptions()
 	return ""
 
-//Should this species be affected by traumatic sights? Necromorphs aren't, for example.
 
-/datum/species/proc/psychosis_vulnerable()
-	return TRUE
 
 
 /*

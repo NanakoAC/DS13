@@ -53,6 +53,8 @@
 	base_type = /datum/extension/sanity_effect //Used for startup filtering
 	flags = EXTENSION_FLAG_IMMEDIATE
 
+	var/mob/living/carbon/human/subject
+
 	var/required_insanity = SANITY_TIER_MINOR
 	var/reserve = SANITY_RESERVE_MINOR
 
@@ -63,6 +65,25 @@
 
 	var/max_duration = 20 MINUTES
 	var/min_duration = null
+
+	//Applying Variables
+
+	//If this has been applied to this mob at least once already in this round, we return this instead of ideal.
+	//Recommended values:
+		//CHECK_NOT_IDEAL: Will not apply a second time unless nothing else is ideal, so the user will almost never see it twice in a round
+		//CHECK_NEVER: Once only per round, never allow a second time
+		//CHECK_IDEAL:	Can repeat endlessly, no limiting. Useful for things that don't grate with repetition
+	var/previously_applied_behaviour = CHECK_NOT_IDEAL //TODO: Not implemented
+
+	//Triggering Variables
+	//TODO: Not implemented
+	var/max_trigger_instances = 1	//How many times can this trigger per application? 0 = no limit
+
+	//If true, this calls apply_client_effects when triggered, and also when the victim logs in
+	var/has_client_effects = FALSE
+
+	//If true, this calls apply_mob_effects when triggered
+	var/has_mob_effects = TRUE
 
 
 /datum/extension/sanity_effect/New(var/datum/holder)
@@ -94,6 +115,7 @@
 	CHECK_NEVER
 	CHECK_INVALID
 	CHECK_NOT_IDEAL
+	CHECK_PREVENTED
 	CHECK_IDEAL
 */
 /*
@@ -105,6 +127,11 @@
 	Then the affect will not be applied, no distinction between them
 
 	If this returns CHECK_NOT_IDEAL, it may not be applied, depending on whether other effects are more ideal
+
+	If it returns
+	CHECK_PREVENTED
+	CHECK_IDEAL
+	Then it applies just fine
 */
 /datum/extension/sanity_effect/proc/can_apply(var/mob/living/carbon/human/victim)
 	return CHECK_IDEAL
@@ -113,13 +140,16 @@
 
 /*
 	Once applied, can this effect start doing its thing?
-	In the case of instant effects, this is called at the same time as can_apply, and has the same consequences as described above
+	In the case of instant effects, this is called at the same time as can_apply,
+	and has the same consequences as described above
 
 	If this returns
-	CHECK_NEVER after already being applied, the effect will be removed
+	CHECK_NEVER after already being applied, the effect will be removed from the mob
 
 	If this returns
-	CHECK_INVALID after already being applied, it will not trigger right now, but try again later
+	CHECK_INVALID
+	CHECK_PREVENTED
+	after already being applied, it will not trigger right now, but try again later
 
 	If this returns
 	CHECK_NOT_IDEAL
@@ -140,4 +170,22 @@
 		trigger()
 
 //Actually do things!
+//don't override this directly if possible, override the procs it calls instead.
+//Add more of them as needed
 /datum/extension/sanity_effect/proc/trigger()
+	if (has_client_effects)
+		//Apply client effects and setup a call to reapply them later
+		if (!GLOB.logged_in_event.is_listening(holder, src, /datum/extension/sanity_effect/proc/apply_client_effects))
+			logged_in_event.register(holder, src, /datum/extension/sanity_effect/proc/apply_client_effects)
+		apply_client_effects()
+
+
+	if (has_mob_effects)
+		apply_mob_effects()
+
+
+
+/datum/extension/sanity_effect/proc/apply_client_effects()
+
+
+/datum/extension/sanity_effect/proc/apply_mob_effects()
