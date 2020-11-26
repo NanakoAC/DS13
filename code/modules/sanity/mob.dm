@@ -31,8 +31,10 @@
 	Insanity from an active event.
 	These use soft capping, any insanity that would go over the limit is reduced, but not discarded
 */
-/mob/living/carbon/human/proc/add_active_insanity(var/quantity, var/limit, var/source, var/reason)
-	world << "[src] recieving active insanity [quantity]/[limit] from [source]|[reason]"
+/mob/living/carbon/human/proc/add_active_insanity(var/datum/sanity_source/source, var/quantity, var/limit, var/source_atom)
+	world << "[src] recieving active insanity [quantity]/[limit] from [source_atom]|[source]"
+	if (!istype(source))
+		source = GLOB.all_sanity_sources[source]
 
 	//Lets find out how much we can wholly add, up to the limit
 	var/clear = INFINITY
@@ -71,7 +73,10 @@
 	Insanity from a passive tick
 	These use hard capping
 */
-/mob/living/carbon/human/proc/add_passive_insanity(var/quantity, var/limit, var/source, var/reason)
+/mob/living/carbon/human/proc/add_passive_insanity(var/datum/sanity_source/source, var/quantity, var/limit, var/source_atom)
+	if (!istype(source))
+		source = GLOB.all_sanity_sources[source]
+
 	var/current = get_insanity(FALSE, FALSE)
 	if (current >= limit)
 		//Hard cap, don't do anything
@@ -83,6 +88,8 @@
 	//TODO: Update the log with source/reason, updating an existing entry if possible before creating anew
 	//Possible future TODO: Trigger an observation indicating sanity was gained
 
+
+
 /*
 	Can this mob recieve insanity and be subjected to sanity effects?
 */
@@ -90,7 +97,7 @@
 	return FALSE	//human only
 
 
-/mob/living/carbon/human/proc/has_sanity()
+/mob/living/carbon/human/has_sanity()
 	//Must be connected, cant scare SSD people
 	if (!client)
 		return FALSE
@@ -99,7 +106,8 @@
 	if (incapacitated(INCAPACITATION_KNOCKOUT))
 		return FALSE
 
-	var/datum/species/S = H.get_brain_species()
+	//Check the species, only normal humans allowed, no necromorphs or lunatics
+	var/datum/species/S = get_mental_species_datum()
 	if (!S || !S.has_sanity)
 		return FALSE
 
@@ -111,3 +119,8 @@
 */
 /mob/living/carbon/human/dummy/has_sanity()
 	return TRUE
+
+
+
+
+

@@ -17,3 +17,25 @@
 
 //Cap on sanity damage from active shouts from necromorphs
 #define SANITY_CAP_SHOUT	300
+
+//Used for creating singleton dummy versions of sanity effects to hold in a global list, for validity checks
+#define REFERENCE	"reference"
+
+
+
+
+/*
+	Sanity Tags:
+	These are used in various places to group things in a flexible manner, including:
+
+	-Causes of Insanity
+		Grouped so that they can be modified by player skills/desensitisation
+	-Types of Sanity Effects
+		Grouped so they can exclude or influence each other
+	-Types of sanity treatment/prevention
+		To exclude/suppress sanity effects
+*/
+#define TAG_GORE	"gore"	//Blood, guts
+#define TAG_DISMEMBERMENT	"dismemberment"	//Limbs and heads being severed
+#define TAG_DEATH	"death"	//Witnessing sentient beings die
+#define TAG_SCREAM	"scream"

@@ -235,7 +235,7 @@
 
 	// Mental/sanity vars
 	var/has_sanity = TRUE	//If true, this species can gain insanity
-
+	var/dismember_sanity_damage	=	12	//Witnessing this species being dismembered causes this much sanity damage
 
 
 	/*--------------------------
@@ -1089,3 +1089,10 @@ These procs should return their entire args list. Best just to return parent in 
 	return species.get_species_audio(arglist(args.Copy()))
 
 
+
+
+/*
+	Mental things
+*/
+/datum/species/proc/handle_sanity(var/mob/living/carbon/human/H)
+	H.sanity_check()

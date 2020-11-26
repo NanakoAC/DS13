@@ -31,6 +31,12 @@
 	virus_immune = 1 // immune to viruses
 
 
+
+	//Mental
+	has_sanity = FALSE
+	dismember_sanity_damage	=	0
+
+
 	death_message = ""
 	knockout_message = "crumples into a heap"
 	halloss_message = "twitches and collapses"
@@ -162,8 +168,6 @@
 	//HUD Handling
 	hud_type = /datum/hud_data/necromorph
 
-/datum/species/necromorph/psychosis_vulnerable()
-	return FALSE
 
 /datum/species/necromorph/New()
 	.=..()

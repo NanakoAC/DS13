@@ -47,7 +47,7 @@
 	The hard minimum insanity (calculated after subtracting courage) that is required to qualify for this effect.
 	If you have less than this, it is not valid
 */
-#define REFERENCE	"reference"
+
 /datum/extension/sanity_effect
 	expected_type = /mob/living/carbon/human
 	base_type = /datum/extension/sanity_effect //Used for startup filtering
@@ -176,7 +176,7 @@
 	if (has_client_effects)
 		//Apply client effects and setup a call to reapply them later
 		if (!GLOB.logged_in_event.is_listening(holder, src, /datum/extension/sanity_effect/proc/apply_client_effects))
-			logged_in_event.register(holder, src, /datum/extension/sanity_effect/proc/apply_client_effects)
+			GLOB.logged_in_event.register(holder, src, /datum/extension/sanity_effect/proc/apply_client_effects)
 		apply_client_effects()
 
 

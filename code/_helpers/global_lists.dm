@@ -24,7 +24,7 @@ var/list/mannequins_
 
 //Sanity
 GLOBAL_LIST_EMPTY(all_sanity_effects)
-
+GLOBAL_LIST_EMPTY(all_sanity_sources)
 
 // Grabs
 var/global/list/all_grabstates[0]
@@ -124,7 +124,18 @@ var/global/list/string_slot_flags = list(
 	paths = typesof(/datum/extension/sanity_effect)
 	for(var/path in paths)
 		var/datum/extension/sanity_effect/S = new path(REFERENCE)
+		if (S.base_type == S.type)
+			continue
 		GLOB.all_sanity_effects[S] = S.required_insanity
+
+
+	//Sanity - Initialise all /datum/extension/sanity_source into an assoc list keyed by typepath, with datum reference as value
+	paths = typesof(/datum/extension/sanity_source)
+	for(var/path in paths)
+		var/datum/extension/sanity_source/S = new path(REFERENCE)
+		if (S.base_type == S.type)
+			continue
+		GLOB.all_sanity_sources[S.type] = S
 
 	//These must be sorted in descending order
 	sortTim(GLOB.all_sanity_effects, /proc/cmp_numeric_dsc, TRUE)

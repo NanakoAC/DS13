@@ -62,7 +62,7 @@
 	//Start spreading corruption
 	start_corruption()
 	update_icon()
-	set_traumatic_sight(TRUE, 5) //Marker is pretty hard to look at.
+	//set_traumatic_sight(TRUE, 5) //Marker is pretty hard to look at.
 
 	//If the marker is activated manually, tell the gamemode to activate itself too.
 	//This is a circular process, activate_marker will call this proc, hence the check for active at the start
