@@ -2667,6 +2667,7 @@
 #include "code\modules\research\server.dm"
 #include "code\modules\research\stock_parts.dm"
 #include "code\modules\sanity\_defines.dm"
+#include "code\modules\sanity\active.dm"
 #include "code\modules\sanity\beacon.dm"
 #include "code\modules\sanity\check.dm"
 #include "code\modules\sanity\effect.dm"

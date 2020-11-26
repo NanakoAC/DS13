@@ -32,6 +32,8 @@
 	These use soft capping, any insanity that would go over the limit is reduced, but not discarded
 */
 /mob/living/carbon/human/proc/add_active_insanity(var/quantity, var/limit, var/source, var/reason)
+	world << "[src] recieving active insanity [quantity]/[limit] from [source]|[reason]"
+
 	//Lets find out how much we can wholly add, up to the limit
 	var/clear = INFINITY
 
@@ -87,9 +89,25 @@
 /mob/proc/has_sanity()
 	return FALSE	//human only
 
+
 /mob/living/carbon/human/proc/has_sanity()
+	//Must be connected, cant scare SSD people
+	if (!client)
+		return FALSE
+
+	//Must be alive and conscious, cant scare the dead or sleepers
+	if (incapacitated(INCAPACITATION_KNOCKOUT))
+		return FALSE
+
 	var/datum/species/S = H.get_brain_species()
 	if (!S || !S.has_sanity)
 		return FALSE
 
+	return TRUE
+
+
+/*
+	Dummies can always recieve sanity damage, for testing purposes
+*/
+/mob/living/carbon/human/dummy/has_sanity()
 	return TRUE
