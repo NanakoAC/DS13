@@ -38,3 +38,13 @@
 	"It echoed like whalesong, but darker")
 
 	sanity_tags = list(TAG_SCREAM)
+
+
+//Witnessing dismemberment
+/datum/sanity_source/dismember
+	descriptions = list("They just...tore him apart",
+	"I've seen a human disassembled like furniture",
+	"He was butchered like an animal",
+	"They cut off his head, and he kept moving, twitching")
+
+	sanity_tags = list(TAG_DISMEMBERMENT)
