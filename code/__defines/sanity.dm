@@ -43,9 +43,9 @@
 	Generally, the more powerful a sanity effect is, the quicker you become desensitized.
 	Big things are only really scary the first few times
 */
-#define DESEN_ACTIVE_HIGH	0.6
-#define DESEN_ACTIVE_MED	0.8
-#define DESEN_ACTIVE_LOW	0.9
+#define DESEN_ACTIVE_HIGH	0.75
+#define DESEN_ACTIVE_MED	0.85
+#define DESEN_ACTIVE_LOW	0.95
 
 //Passive effects tick each second so they have MUCH lower desensitisation rates
 #define DESEN_PASSIVE_HIGH	0.99
