@@ -78,8 +78,8 @@
 			species.handle_npc(src)
 
 		//Insanity ticks once per minute
-		else if (insanity && ((life_tick % 60) == 0))
-			species.handle_sanity(src)
+		else if (mind && mind.insanity)
+			species.handle_sanity(src, mind)
 
 
 	if(!handle_some_updates())

@@ -905,6 +905,12 @@ Note that amputating the affected organ does in fact remove the infection from t
 	if(!clean)
 		victim.shock_stage += min_broken_damage
 
+		//Witnessing nonsurgical dismemberment is pretty awful, this will only affect people who aren't the victim
+		victim.visible_sanity_damage(/datum/sanity_source/dismember)
+
+		//Actually experiencing it is way more awful, this affects the victim themselves
+		victim.add_active_insanity(/datum/sanity_source/self_dismember)
+
 	if(parent_organ)
 		var/datum/wound/lost_limb/W = new (src, disintegrate, clean)
 		if(clean)

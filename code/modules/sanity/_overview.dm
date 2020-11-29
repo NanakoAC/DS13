@@ -11,8 +11,10 @@
 
 	Each human has an insanity value which starts at 0 and can rise to over 1000. Various effects trigger from it
 
-	Insanity is only gained from horrible or spooky things. Witnessing violence, blood, gore, hearing screams, having signals mess with you, etc.
-	Under normal circumstances, insanity will always remain at zero, you won't start going mad because you missed lunch
+	Insanity is only gained from horrible or spooky things. Witnessing violence, blood, gore, hearing screams, having signals mess
+	with you, etc.
+	Under normal circumstances, insanity will always remain at zero, you won't start going mad because you missed lunch or saw
+	some trash.
 
 
 
@@ -20,10 +22,9 @@
 	Sanity Effects:
 	----------------
 	An effect is a tangible consequence of your insanity. You may start stumbling around dizzy, or be posessed with an urge to cut
-	yourself and bleed everywhere.
+	yourself and bleed everywhere, or lose control and suck on the barrel of your gun.
 
-	Higher insanity primarily affects the severity of these effects. More of it means more dangerous effects. It also modestly
-	affects the frequency at which effects are applied
+	Higher insanity primarily affects the severity of these effects. More of it means more and more dangerous effects.
 
 
 	Sanity effects are divided into four very loose tiers
@@ -39,6 +40,8 @@
 	of which effects to apply is randomised, but is weighted towards the most severe things that you meet the requirements for,
 
 	see effect.dm for more details
+
+
 
 	Recovery and Mood:
 	-------------------

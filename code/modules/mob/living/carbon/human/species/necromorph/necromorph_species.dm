@@ -34,7 +34,8 @@
 
 	//Mental
 	has_sanity = FALSE
-	dismember_sanity_damage	=	0
+	dismember_sanity_damage	=	0	//They're monsters, cutting them to bits is more satisfying than traumatic
+	death_sanity_damage = 0			//Killing them is cathartic
 
 
 	death_message = ""

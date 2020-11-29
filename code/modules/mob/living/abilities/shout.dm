@@ -1,4 +1,4 @@
-//Simple ability that makes a loud screaming noise, causes screenshake in everyone nearby.
+//Simple ability that makes a loud screaming noise, causes screenshake and sanity damage in everyone nearby.
 /mob/proc/shout()
 	set name = "Shout"
 	set category = "Abilities"
@@ -6,10 +6,16 @@
 	if (incapacitated(INCAPACITATION_KNOCKOUT))
 		return
 
-	do_shout(SOUND_SHOUT, sanity_damage = 5)
+	var/sanity_damage = 5
+	var/datum/species/S = get_mental_species_datum()
+	if (S)
+		sanity_damage = S.shout_sanity_damage
+
+	do_shout(SOUND_SHOUT, sanity_damage = sanity_damage)
 
 
 //Simple ability that makes a louder screaming noise, causes more screenshake in everyone nearby.
+//Causes sanity damage equal to 1.6x what a normal shout does
 /mob/proc/shout_long()
 	set name = "Scream"
 	set category = "Abilities"
@@ -17,7 +23,12 @@
 	if (incapacitated(INCAPACITATION_KNOCKOUT))
 		return
 
-	do_shout(SOUND_SHOUT_LONG, sanity_damage = 8)
+	var/sanity_damage = 8
+	var/datum/species/S = get_mental_species_datum()
+	if (S)
+		sanity_damage = S.shout_sanity_damage * 1.6
+
+	do_shout(SOUND_SHOUT_LONG, sanity_damage = sanity_damage)
 
 
 
@@ -25,7 +36,9 @@
 	if (check_audio_cooldown(sound_type))
 		var/file = get_species_audio(sound_type)
 		var/list/sound_params = list("source" = src, "soundin" = file, "vol" = VOLUME_HIGH, "vary" = TRUE)
-		audible_sanity_damage(quantity = sanity_damage, limit = SANITY_CAP_SHOUT, override_source = null,  reason = sound_type, sound_parameters = sound_params)
+
+		//We use this proc which will play the sound, meter the heard volume, and deal sanity damage appropriately
+		audible_sanity_damage(/datum/sanity_source/scream, sanity_damage, sound_parameters = sound_params)
 
 		if (do_stun)
 			src.Stun(1)

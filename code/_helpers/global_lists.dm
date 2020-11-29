@@ -130,9 +130,9 @@ var/global/list/string_slot_flags = list(
 
 
 	//Sanity - Initialise all /datum/extension/sanity_source into an assoc list keyed by typepath, with datum reference as value
-	paths = typesof(/datum/extension/sanity_source)
+	paths = typesof(/datum/sanity_source)
 	for(var/path in paths)
-		var/datum/extension/sanity_source/S = new path(REFERENCE)
+		var/datum/sanity_source/S = new path(REFERENCE)
 		if (S.base_type == S.type)
 			continue
 		GLOB.all_sanity_sources[S.type] = S

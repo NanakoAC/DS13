@@ -201,7 +201,12 @@ Best used near the end, when all seems quiet, to help the necromorphs hunt down 
 
 	.=frenzy_shout_ability(60 SECONDS, 0.3, 30 SECONDS, FACTION_NECROMORPH, 9)
 	if (.)
-		play_species_audio(src, SOUND_SHOUT_LONG, VOLUME_MAX, 1, 6)//Very loud, heard far away
+
+		//Deals high sanity damage to everyone who hears it
+		var/list/sound_params = list("source" = src, "soundin" = get_species_audio(SOUND_SHOUT_LONG), "vol" = VOLUME_MAX, "vary" = TRUE, "extrarange" = 6)
+		audible_sanity_damage(/datum/sanity_source/scream, sanity_damage = 50, sound_parameters = sound_params)
+
+		//play_species_audio(src, SOUND_SHOUT_LONG, VOLUME_MAX, 1, 6)//Very loud, heard far away
 		shake_camera(src, 6, 4)
 
 		for (var/mob/living/L in view(species.view_range, src))

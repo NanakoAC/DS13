@@ -1,10 +1,12 @@
 /mob/living/carbon/human
-	var/insanity = 0	//How insane we are. Generally in the range 0-1000, but no hard maximum
-	var/next_sanity_check	=	0	//Minimum world time before this mob is allowed to do another sanity check
-	var/courage	= 0//subtracted from insanity under most circumstances
+
+
 
 /mob/living/carbon/human/proc/get_insanity(var/include_courage, var/include_reserve)
-	. = insanity
+	var/datum/mind/M = get_mind()
+	if (!M)
+		return FALSE
+	. = M.insanity
 
 	//Sanity reserved by active effects is calculated first, this does not go below zero
 	if (include_reserve)
@@ -24,48 +26,13 @@
 		. -= get_courage()
 
 /mob/living/carbon/human/proc/get_courage()
-	return courage
+	var/datum/mind/M = get_mind()
+	if (!M)
+		return FALSE
+	return M.courage
 
 
-/*
-	Insanity from an active event.
-	These use soft capping, any insanity that would go over the limit is reduced, but not discarded
-*/
-/mob/living/carbon/human/proc/add_active_insanity(var/datum/sanity_source/source, var/quantity, var/limit, var/source_atom)
-	world << "[src] recieving active insanity [quantity]/[limit] from [source_atom]|[source]"
-	if (!istype(source))
-		source = GLOB.all_sanity_sources[source]
 
-	//Lets find out how much we can wholly add, up to the limit
-	var/clear = INFINITY
-
-	//If no limit, all of it is clear
-	if (limit)
-		clear = limit - get_insanity(FALSE, FALSE)
-		if (clear < 0) clear = 0
-
-
-	//This is the portion that will be softcapped
-	if (clear < quantity)
-		var/limited_quantity = quantity - clear
-		quantity -= limited_quantity
-
-		//The default groupsize settings are probably fine for this
-		limited_quantity = soft_cap(limited_quantity)
-
-		//And recombine them now
-		quantity += limited_quantity
-
-
-	//Alrighty, we are clear to modify our insanity
-	insanity += quantity
-
-	//TODO Here: Visual effect in the hud indicating insanity was gained
-	//Possible future TODO: Trigger an observation indicating sanity was gained
-	//TODO Future: Log the source/reason in some kind of ticker
-
-	//We do a sanity check with the quantity as extra prob
-	sanity_check(quantity)
 
 
 
@@ -73,19 +40,27 @@
 	Insanity from a passive tick
 	These use hard capping
 */
-/mob/living/carbon/human/proc/add_passive_insanity(var/datum/sanity_source/source, var/quantity, var/limit, var/source_atom)
+/mob/living/carbon/human/proc/add_passive_insanity(var/datum/sanity_source/source, var/sanity_damage, var/sanity_limit, var/origin_atom)
+	var/datum/mind/M = get_mind()
+	if (!M)
+		return FALSE
 	if (!istype(source))
 		source = GLOB.all_sanity_sources[source]
 
+
+
 	var/current = get_insanity(FALSE, FALSE)
-	if (current >= limit)
+	if (current >= sanity_limit)
 		//Hard cap, don't do anything
 		return
 
-	insanity = max(current+quantity, limit)
+	//Handle repeat things
+	sanity_damage *= get_desensitisation_factor(source)
+
+	M.insanity = max(current+sanity_damage, sanity_limit)
 
 
-	//TODO: Update the log with source/reason, updating an existing entry if possible before creating anew
+	M.increment_sanity_log(source, sanity_damage)
 	//Possible future TODO: Trigger an observation indicating sanity was gained
 
 
@@ -100,6 +75,11 @@
 /mob/living/carbon/human/has_sanity()
 	//Must be connected, cant scare SSD people
 	if (!client)
+		return FALSE
+
+	//Need a mind
+	var/datum/mind/M = get_mind()
+	if (!M)
 		return FALSE
 
 	//Must be alive and conscious, cant scare the dead or sleepers
@@ -120,6 +100,54 @@
 /mob/living/carbon/human/dummy/has_sanity()
 	return TRUE
 
+
+
+
+
+
+/*
+
+*/
+/mob/living/carbon/human/proc/get_sanity_recovery()
+
+	//TODO: Check for adrenaline and return 0 if there is any
+
+	. = SANITY_REGEN_BASE
+
+	//TODO: Calculate and factor in mood
+
+
+/*
+	Gets a multiplier to modify incoming psych damage based on how many times we've seen this source before
+*/
+/mob/living/carbon/human/proc/get_desensitisation_factor(var/datum/sanity_source/source)
+	. = 1 //Incase something fails, we just return one, no change to the damage
+
+	var/datum/mind/M = get_mind()
+	if (!M)
+		return
+
+	var/list/data = M.sanity_log[source]
+	if (!LAZYLEN(data))
+		return
+
+	var/frequency = data["frequency"]
+	if (!isnum(frequency))
+		return
+
+	//Future TODO here: Adjust the effective frequency based on a player skill to be added in future
+
+	//We return 1x the desensitisation multiplier to the power of the frequency
+	return 1 * (source.desensitisation ** frequency)
+
+
+
+/*
+	Sanity dummy is intended for testing insanity effects, it gets an empty mind datum
+*/
+/mob/living/carbon/human/dummy/sanity/Initialize()
+	.=..()
+	mind = new()
 
 
 

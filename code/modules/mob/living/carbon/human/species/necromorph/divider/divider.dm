@@ -68,7 +68,7 @@
 
 
 	species_audio_volume = list(SOUND_SHOUT_LONG = VOLUME_MAX, SOUND_SPEECH = VOLUME_HIGH, SOUND_SHOUT = VOLUME_MID)
-
+	shout_sanity_damage = 15 //Exceptionally spooky voice
 	slowdown = 3.5
 
 	inherent_verbs = list(/mob/living/carbon/human/proc/divider_divide, /mob/living/carbon/human/proc/divider_tongue, /mob/living/carbon/human/proc/divider_arm_swing, /mob/proc/shout, /mob/proc/shout_long)
@@ -88,6 +88,9 @@ This means that these parts of its body are comparitively much harder to hit wit
 
 #define DIVIDER_PASSIVE_3	"<h2>PASSIVE: Momentum:</h2><br>\
 The divider is slow and ponderous to start, building up speed over ten tiles. At full speed it will scream at nearby humans."
+
+#define DIVIDER_PASSIVE_4	"<h2>PASSIVE: Haunting Song:</h2><br>\
+The divider's voice is exceptionally loud, deep, and far ranging. It deals triple the normal quantity of sanity damage to humans who hear it."
 
 #define DIVIDER_SWING_DESC 	"<h2>Swipe:</h2><br>\
 <h3>Hotkey: Alt+Click </h3><br>\
@@ -143,6 +146,8 @@ Reanimate can be used to take control of any already-headless corpse on the grou
 	. += DIVIDER_PASSIVE_2
 	. += "<hr>"
 	. += DIVIDER_PASSIVE_3
+	. += "<hr>"
+	. += DIVIDER_PASSIVE_4
 	. += "<hr>"
 	. += DIVIDER_SWING_DESC
 	. += "<hr>"

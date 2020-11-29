@@ -235,8 +235,9 @@
 
 	// Mental/sanity vars
 	var/has_sanity = TRUE	//If true, this species can gain insanity
-	var/dismember_sanity_damage	=	12	//Witnessing this species being dismembered causes this much sanity damage
-
+	var/dismember_sanity_damage	=	SANITY_DAMAGE_DISMEMBER	//Witnessing this species being dismembered causes this much sanity damage
+	var/shout_sanity_damage = SANITY_DAMAGE_SCREAM	//This creature's screams cause up to this much sanity damage in those who hear it
+	var/death_sanity_damage	= SANITY_DAMAGE_DEATH	//Witnessing the death of this creature causes this much sanity damage
 
 	/*--------------------------
 		ORGAN HANDLING
@@ -1091,8 +1092,3 @@ These procs should return their entire args list. Best just to return parent in 
 
 
 
-/*
-	Mental things
-*/
-/datum/species/proc/handle_sanity(var/mob/living/carbon/human/H)
-	H.sanity_check()

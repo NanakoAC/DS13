@@ -2,6 +2,66 @@
 	This file contains the standard procs for dealing active sanity damage to mobs
 */
 
+
+
+/*
+	Insanity from an active event.
+	These use soft capping, any insanity that would go over the limit is reduced, but not discarded
+*/
+/mob/living/carbon/human/proc/add_active_insanity(var/datum/sanity_source/source, var/sanity_damage, var/sanity_limit, var/origin_atom)
+
+	if (!istype(source))
+		source = GLOB.all_sanity_sources[source]
+
+	var/datum/mind/M = get_mind()
+	if (!M)
+		return FALSE
+
+	sanity_damage = (!isnull(sanity_damage)) ? sanity_damage : source.sanity_damage
+	sanity_limit = (!isnull(sanity_limit)) ? sanity_limit : source.sanity_limit
+	origin_atom = (!isnull(origin_atom)) ? origin_atom : src
+
+	//Handle repeat things
+	sanity_damage *= get_desensitisation_factor(source)
+
+
+	world << "[src] recieving active insanity [sanity_damage]/[sanity_limit] from [origin_atom]|[source]"
+	//Lets find out how much we can wholly add, up to the sanity_limit
+	var/clear = INFINITY
+
+	//If no sanity_limit, all of it is clear
+	if (sanity_limit)
+		clear = sanity_limit - get_insanity(FALSE, FALSE)
+		if (clear < 0)
+			clear = 0
+
+
+	//This is the portion that will be softcapped
+	if (clear < sanity_damage)
+		var/limited_sanity_damage = sanity_damage - clear
+		sanity_damage -= limited_sanity_damage
+
+		//The default groupsize settings are probably fine for this
+		limited_sanity_damage = soft_cap(limited_sanity_damage)
+
+		//And recombine them now
+		sanity_damage += limited_sanity_damage
+
+
+	//Alrighty, we are clear to modify our insanity
+	M.insanity += sanity_damage
+
+	//TODO Here: Visual effect in the hud indicating insanity was gained
+	//Possible future TODO: Trigger an observation indicating sanity was gained
+
+	//Filling the sanity log
+	M.increment_sanity_log(source, sanity_damage)
+
+
+	//We do a sanity check with the quantity as extra prob
+	sanity_check(sanity_damage)
+
+
 /*
 	Applies insanity to humans who can see this atom's turf
 
@@ -9,32 +69,45 @@
 		Sourcetype: A typepath which must be a subtype of /datum/sanity_source. this will be used to fetch a datum from a global ref list
 			This tells us what kind of thing is causing this sanity damage, used for logging and messages
 
-		Quantity: (optional)	How much insanity we are applying. If not specified, the default value will be grabbed from
+		sanity_damage: (optional)	How much insanity we are applying. If not specified, the default value will be grabbed from
 			the sanity source datum
 
-		Limit: (optional) How high to raise insanity before we start softcapping. If not specified, the default value will be grabbed from
+		sanity_limit: (optional) How high to raise insanity before we start softcapping. If not specified, the default value will be grabbed from
 			the sanity source datum
 
 		Source Atom: (optional)	Which specific thing in the world is responsible for causing sanity damage.
 			If not specified, src is used
 */
-/atom/proc/visible_sanity_damage(var/source_type, var/quantity, var/limit, var/source_datum = null)
-	var/datum/sanity_source/S = GLOB.all_sanity_sources[source_type]
-	if (!istype(S))
-		CRASH("Invalid sanity source: [source_type]")
+/atom/proc/visible_sanity_damage(var/datum/sanity_source/source, var/sanity_damage, var/sanity_limit, var/origin_atom)
 
-	quantity = quantity ? quantity : S.quantity
-	limit = limit ? limit : S.limit
-	source_datum = source_datum ? source_datum : src
+	if (!istype(source))
+		source = GLOB.all_sanity_sources[source]
 
-	var/list/viewers = get_viewers(maxrange = 10, required_type = /mob/living/carbon/human)
+	sanity_damage = (!isnull(sanity_damage)) ? sanity_damage : source.sanity_damage
+	sanity_limit = (!isnull(sanity_limit)) ? sanity_limit : source.sanity_limit
+	origin_atom = (!isnull(origin_atom)) ? origin_atom : src
+
+	//TODO: Change this to use get_viewers instead of get_mob_viewers, once things are out of debugging
+	var/list/viewers = get_mob_viewers(maxrange = 10, required_type = /mob/living/carbon/human)
+
+
+	viewers -= origin_atom	//We generally dont want to scare ourselves. and if we do, do it seperately
+
 	for (var/mob/living/carbon/human/H as anything in viewers)
 		//Ignore necromorphs and lunatics
 		if (!H.has_sanity())
 			continue
 
+		var/insanity_to_apply = sanity_damage
 
-		H.add_active_insanity(S, quantity, limit, source_datum)
+
+		//If you're not looking directly at the spooky thing, the sanity damage is reduced
+		//See no evil!
+		if (!target_in_frontal_arc(H, origin_atom))
+			insanity_to_apply *= SANITY_VISIBLE_LOOKAWAY_MULT
+
+
+		H.add_active_insanity(source, insanity_to_apply, sanity_limit, origin_atom)
 
 
 
@@ -46,25 +119,27 @@
 
 	The sound will be played, and this proc will get back a list of who heard it and how loudly. The sanity damage will be scaled by the volume
 */
-/atom/proc/audible_sanity_damage(var/source_type, var/quantity = 1, var/limit = 0, var/source_datum = null, var/list/sound_parameters)
-	var/datum/sanity_source/S = GLOB.all_sanity_sources[source_type]
-	if (!istype(S))
-		CRASH("Invalid sanity source: [source_type]")
+/atom/proc/audible_sanity_damage(var/datum/sanity_source/source, var/sanity_damage, var/sanity_limit, var/origin_atom, var/list/sound_parameters)
 
-	quantity = quantity ? quantity : S.quantity
-	limit = limit ? limit : S.limit
-	source_datum = source_datum ? source_datum : src
+	if (!istype(source))
+		source = GLOB.all_sanity_sources[source]
+
+	sanity_damage = (!isnull(sanity_damage)) ? sanity_damage : source.sanity_damage
+	sanity_limit = (!isnull(sanity_limit)) ? sanity_limit : source.sanity_limit
+	origin_atom = (!isnull(origin_atom)) ? origin_atom : src
 
 	//Listeners is an associative list generated by metered sound proc, in the format mob = volume_they_heard
 	var/list/listeners = play_metered_sound(arglist(sound_parameters))
 	for (var/mob/living/carbon/human/H in listeners)
+		if (H == origin_atom)
+			continue
 		world << "Attempting to apply audible sanity damage to [H]"
 		//Ignore necromorphs and lunatics
 		if (!H.has_sanity())
 			continue
 
 		var/scalar = volume_to_scalar(listeners[H])
-		H.add_active_insanity(S, quantity*scalar, limit, source_datum)
+		H.add_active_insanity(source, sanity_damage*scalar, sanity_limit, origin_atom)
 
 
 //Takes a volume as an input, returns a multiplier in the range 0..1 based on that volume.

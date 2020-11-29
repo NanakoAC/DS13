@@ -432,7 +432,7 @@ proc
 		var/turf/T = get_step(src, direction)
 		.+=T
 
-//This proc attempts to get all mobs who are able to see this atom
+//This proc attempts to get all player who are able to see this atom
 //Set required type to /mob/living to exclude ghosts
 /atom/proc/get_viewers(var/maxrange = 20, var/required_type = /mob, var/once_only = FALSE)
 	var/list/our_viewers = list()
@@ -477,6 +477,47 @@ proc
 		var/turf/T = get_turf(A)
 		if (!(T in view_area))
 			continue
+
+		//Alright we're done. If we've reached this point, then this guy can see us
+		our_viewers |= A
+
+		if (once_only)
+			break
+	return our_viewers
+
+
+/*
+	Gets a list of all mobs who can see this atom.
+	Unlike the above, this includes all mobs, not just players with clients.
+	This is probably more expensive than get_viewers, so only use it when NPCs being detected is essential
+*/
+/atom/proc/get_mob_viewers(var/maxrange = 20, var/required_type = /mob, var/once_only = FALSE)
+	var/list/our_viewers = list()
+
+
+	var/turf/origin = get_turf(src)
+
+	var/list/view_area = dview(maxrange, origin)
+
+
+	//This is a list of all mobs with clients. At any given time it might contain 0-100 things
+	//Searching this is much cheaper than searching the contents of a view call, which is often several thousand atoms
+	for (var/mob/A as anything in view_area)
+		//A mob seeing itself doesnt count
+		if (A == src)
+			continue
+
+		if (!istype(A, required_type))
+			continue
+
+
+		//Alright if we get here, then someone might possibly be able to see this object, here we start the more expensive checks
+		var/client/C = A.get_client()
+		if (C)
+
+			//Lets see if this item falls within the candidate's screen
+			if (!C.is_on_screen(src))
+				continue
 
 		//Alright we're done. If we've reached this point, then this guy can see us
 		our_viewers |= A

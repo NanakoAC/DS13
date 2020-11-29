@@ -60,9 +60,12 @@
 	Passing in a number here adds it to the probability of the sanity check, making it more or less likely that an effect will be chosen
 */
 /mob/living/carbon/human/proc/sanity_check(var/extra_prob = 0)
+	var/datum/mind/M = get_mind()
+	if (!M)
+		return
 
 	//Cooldown
-	if (world.time < next_sanity_check)
+	if (world.time < M.next_sanity_check)
 		return
 
 	//Alright, now lets get the sanity we use for probability calculations
@@ -221,3 +224,10 @@
 	//Possible todo: Farther modifications here
 
 	return possible
+
+
+
+/mob/proc/set_check_cooldown(var/delta)
+	var/datum/mind/M = get_mind()
+	if (M)
+		M.next_sanity_check += delta

@@ -15,12 +15,42 @@
 //Baseline probability of getting a sanity effect at each check, in addition to calculations
 #define SANITY_PROBABILITY_BASE	3
 
+//If you see something spooky but aren't directly facing it, the incoming sanity damage is multiplied by this
+//Of course there are other risks to turning your back on horrible things
+#define SANITY_VISIBLE_LOOKAWAY_MULT	0.6
+
+//Baseline values on sanity damage
+#define SANITY_DAMAGE_SCREAM	5
+#define SANITY_DAMAGE_DISMEMBER	75	//Watching others get dismembered
+#define SANITY_DAMAGE_SELF_DISMEMBER	200	//Losing your own limb is crazy terrifying
+#define SANITY_DAMAGE_DEATH	50	//Death itself is fairly damaging, but its usually accompanied by dismemberment and gore that add more insanity ontop of this
+
+
+//Caps on sanity damage
 //Cap on sanity damage from active shouts from necromorphs
 #define SANITY_CAP_SHOUT	300
+#define SANITY_CAP_DISMEMBER	800	//Brutal violence has high limits
 
 //Used for creating singleton dummy versions of sanity effects to hold in a global list, for validity checks
 #define REFERENCE	"reference"
 
+
+/*
+	Desensitisation values
+	The sanity damage from experiencing an effect more than once is multiplied by this to the power of the number of times you've
+	seen it. Lower values are stronger
+
+	Generally, the more powerful a sanity effect is, the quicker you become desensitized.
+	Big things are only really scary the first few times
+*/
+#define DESEN_ACTIVE_HIGH	0.6
+#define DESEN_ACTIVE_MED	0.8
+#define DESEN_ACTIVE_LOW	0.9
+
+//Passive effects tick each second so they have MUCH lower desensitisation rates
+#define DESEN_PASSIVE_HIGH	0.99
+#define DESEN_PASSIVE_MED	0.995
+#define DESEN_PASSIVE_LOW	0.999
 
 
 
@@ -39,3 +69,36 @@
 #define TAG_DISMEMBERMENT	"dismemberment"	//Limbs and heads being severed
 #define TAG_DEATH	"death"	//Witnessing sentient beings die
 #define TAG_SCREAM	"scream"
+
+
+
+
+/*
+	Cooldowns:
+	Hard minimums after checks or effects, before another sanity check can occur.
+	These are not very large because they're not the primary method of pacing out effects.
+
+	That is handled by the probabilities based on your insanity, and the time between effects is usually much longer than this
+
+	Their main purpose is just to prevent oddities of several effects occuring at once, and give you time to read the strings
+	before being subjected to something new
+*/
+#define CHECK_COOLDOWN_CHECK	5 SECONDS	//Minimum after a check in all circumstances
+#define CHECK_COOLDOWN_MINOR	20 SECONDS
+#define CHECK_COOLDOWN_MODERATE	2 MINUTES
+#define CHECK_COOLDOWN_MAJOR	5 MINUTES
+
+
+
+/*
+	Recovery
+	Sanity restored per second
+*/
+#define SANITY_REGEN_BASE	0.8333	//5 points restored per minute
+
+
+/*
+	How many life ticks (seconds) between each automatic sanity check
+	Default 60, once per minute
+*/
+#define SANITY_CHECK_INTERVAL	60

@@ -419,36 +419,3 @@
 
 
 
-//Checks if target is within arc degrees either side of user's forward vector.
-//Used to make mobs that can only click on stuff infront of them
-//Code supplied by Kaiochao
-	//Note: Rounding included to compensate for a byond bug in 513.1497.
-	//Without the rounding, cos(90) returns an erroneous value which breaks this proc
-/proc/target_in_frontal_arc(var/mob/user, var/atom/target, var/arc)
-	//You are allowed to click yourself and things in your own turf
-	if (get_turf(user) == get_turf(target))
-		return TRUE
-
-	var/vector2/dirvector = Vector2.NewFromDir(user.dir)
-	var/vector2/dotvector = get_new_vector(target.x - user.x, target.y - user.y)
-	dotvector.SelfNormalize()
-	. = (round(dirvector.Dot(dotvector),0.000001) >= round(cos(arc),0.000001))
-	release_vector(dirvector)
-	release_vector(dotvector)
-
-
-
-//Checks if target is within arc degrees either side of a specified direction vector from user. All parameters are mandatory
-//Rounding explained above
-/proc/target_in_arc(var/atom/origin, var/atom/target, var/vector2/direction, var/arc)
-	origin = get_turf(origin)
-	target = get_turf(target)
-	if (origin == target)
-		return TRUE
-
-	var/vector2/dirvector = direction.Copy()
-	var/vector2/dotvector = get_new_vector(target.x - origin.x, target.y - origin.y)
-	dotvector.SelfNormalize()
-	.= (round(dirvector.Dot(dotvector),0.000001) >= round(cos(arc),0.000001))
-	release_vector(dotvector)
-	release_vector(dirvector)

@@ -35,6 +35,12 @@
 	BITSET(hud_updateflag, STATUS_HUD)
 	BITSET(hud_updateflag, LIFE_HUD)
 
+	//Death sanity handling
+	//We use the body species for this, what the mob looks like is more important than who it is inside
+	var/datum/species/S = get_species()
+	if (S)
+		visible_sanity_damage(/datum/sanity_source/death, species.death_sanity_damage)
+
 	//backs up lace if available.
 	var/obj/item/organ/internal/stack/s = get_organ(BP_STACK)
 	if(s)

@@ -69,6 +69,8 @@
 	var/ambitions
 
 
+
+
 /datum/mind/New(var/key)
 	src.key = key
 	..()
@@ -565,3 +567,8 @@
 	..()
 	mind.assigned_role = "Juggernaut"
 	mind.special_role = "Cultist"
+
+
+
+/mob/proc/get_mind()
+	return mind
