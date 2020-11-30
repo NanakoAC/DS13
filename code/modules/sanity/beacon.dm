@@ -1,10 +1,25 @@
 /*
 	Horror Beacon:
 	Horror beacons are used for passive sources of insanity
-	An HB is an invisible object which takes into account all the scary things around it, and distributes sanity damage appropriately.
-	They are primarily used for a massive optimisation, at a minor cost in accuracy.
+	An HB is an invisible object which acts as an atomic holder for a passive scan extension.
 	We make the assumption that if someone can see the beacon, then they can see the horrible things nearby
 
-	To calculate sight, the beacon uses a view proximity trigger to track tiles that it can see. Anyone stepping onto one of those
-	will do some more advanced visibility calculations
+
 */
+/obj/horror_beacon
+	var/area/registered_area
+
+/obj/horror_beacon/Initialize()
+	.=..()
+
+	var/area/A = get_area()
+	if (A)
+		A.horror_beacons.LAZYADD(src)
+		registered_area = A
+
+
+
+/obj/horror_beacon/Destroy()
+	.=..()
+	if (registered_area)
+		registered_area.horror_beacons.LAZYREMOVE(src)

@@ -398,6 +398,10 @@
 /obj/machinery/light/proc/flicker(var/amount = rand(6, 12))
 	if(flickering) return
 	flickering = 1
+
+	//Flickering lights are spooky
+	visible_sanity_damage(/datum/sanity_source/malfunction)
+
 	spawn(0)
 		if(on && get_status() == LIGHT_OK)
 			for(var/i = 0; i < amount; i++)
@@ -493,6 +497,10 @@
 		return
 
 	if(!skip_sound_and_sparks)
+
+		//Exploding lights are 3x as spooky as flickering
+		visible_sanity_damage(/datum/sanity_source/malfunction, SANITY_DAMAGE_MALFUNCTION*3)
+
 		if(lightbulb && !(lightbulb.status == LIGHT_BROKEN))
 			playsound(src.loc, 'sound/effects/Glasshit.ogg', 75, 1)
 		if(on)

@@ -25,6 +25,10 @@
 		remove_extension(target, /datum/extension/lockdown)
 		refund(user)
 
+	else
+		//Getting locked into a room is quite panic inducing
+		A.visible_sanity_damage(/datum/sanity_source/malfunction, SANITY_DAMAGE_MALFUNCTION*10)
+
 
 /datum/signal_ability/lockdown
 	name = "Biohazard Lockdown"
@@ -65,6 +69,9 @@
 				var/datum/extension/lockdown/lock = set_extension(AL, /datum/extension/lockdown, duration, 2)
 				if (!lock.start())
 					remove_extension(target, /datum/extension/lockdown)
+				else
+					//Getting locked into a room is quite panic inducing
+					A.visible_sanity_damage(/datum/sanity_source/malfunction, SANITY_DAMAGE_MALFUNCTION*10)
 			//Its more dramatic if they're not all simultaneous
 			sleep(4)
 

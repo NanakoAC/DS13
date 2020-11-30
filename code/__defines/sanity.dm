@@ -24,12 +24,13 @@
 #define SANITY_DAMAGE_DISMEMBER	75	//Watching others get dismembered
 #define SANITY_DAMAGE_SELF_DISMEMBER	200	//Losing your own limb is crazy terrifying
 #define SANITY_DAMAGE_DEATH	50	//Death itself is fairly damaging, but its usually accompanied by dismemberment and gore that add more insanity ontop of this
-
+#define SANITY_DAMAGE_MALFUNCTION	3.5	//Light flickering
 
 //Caps on sanity damage
 //Cap on sanity damage from active shouts from necromorphs
 #define SANITY_CAP_SHOUT	300
 #define SANITY_CAP_DISMEMBER	800	//Brutal violence has high limits
+#define SANITY_CAP_MALFUNCTION	200	//Malfunctioning machines are only mildly spooky
 
 //Used for creating singleton dummy versions of sanity effects to hold in a global list, for validity checks
 #define REFERENCE	"reference"
@@ -68,8 +69,8 @@
 #define TAG_GORE	"gore"	//Blood, guts
 #define TAG_DISMEMBERMENT	"dismemberment"	//Limbs and heads being severed
 #define TAG_DEATH	"death"	//Witnessing sentient beings die
-#define TAG_SCREAM	"scream"
-
+#define TAG_SCREAM	"scream"	//Hearing necromorphs shouting
+#define TAG_MALFUNCTION "malfunction"	//Flickering/exploding lights, doors locking themselves. Machinery behaving strangely in general
 
 
 
@@ -102,3 +103,19 @@
 	Default 60, once per minute
 */
 #define SANITY_CHECK_INTERVAL	60
+
+
+/*
+	When multiple copies of the same kind of passive sanity source (bloodstains, corpses, gore, etc) are in an area, their
+	sanity damage per second has falloff for each copy after the first.
+	First one has full damage
+	Second one has damage multiplied by (1 * (SANITY_PASSIVE_STACK_SOFTCAP ** 1))
+	Third one has damage multiplied by (1 * (SANITY_PASSIVE_STACK_SOFTCAP ** 2))
+
+	and so on
+
+	This calculation is done once and precached, whenever a new atom is added or removed to a passive source
+*/
+#define SANITY_PASSIVE_STACK_FALLOFF_HIGH	0.8
+#define SANITY_PASSIVE_STACK_FALLOFF_MID	0.9
+#define SANITY_PASSIVE_STACK_FALLOFF_LOW	0.95

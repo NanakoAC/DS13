@@ -27,7 +27,9 @@
 	//The sanity damage from a source is multiplied by this to the power of the number of times its already been seen
 	var/desensitisation = DESEN_ACTIVE_LOW
 
-
+	//Used to taper off the stacking effects from many passive sources of the same type, like lots of bloodstains
+	//Only used in passive sources, irrelevant for active ones
+	var/falloff	=	SANITY_PASSIVE_STACK_FALLOFF_LOW
 
 
 /*
@@ -89,9 +91,27 @@
 
 	sanity_tags = list(TAG_DEATH)
 	sanity_damage = SANITY_DAMAGE_DEATH
-	sanity_limit = SANITY_CAP_DISMEMBER
 
 	desensitisation = DESEN_ACTIVE_MED
+
+/datum/sanity_source/malfunction
+	name = "malfunction"
+	descriptions = list("I swear this ship is haunted",
+	"What's wrong with the lights around here?",
+	"This ship is falling apart",
+	"This ship is a floating coffin",
+	"Why do the doors keep malfunctioning?",
+	"What if an airlock opens itself and kills us all?",
+	"Can't trust anything on this ship, its all buggy",
+	"Does anything work right around here?",
+	"This old vessel is really showing its age")
+
+	sanity_tags = list(TAG_MALFUNCTION)
+	sanity_damage = SANITY_DAMAGE_MALFUNCTION
+
+	sanity_limit = SANITY_CAP_MALFUNCTION
+
+	desensitisation = DESEN_ACTIVE_LOW
 
 /*
 	TODO:
@@ -102,5 +122,4 @@
 	corruption nodes
 	gaze
 	whispers
-	station malfunctions (light blowout, doors locking)
 */
