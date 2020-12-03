@@ -14,5 +14,5 @@
 	if (trigger)
 		QDEL_NULL(trigger)
 
-	var/datum/proximity_trigger/view/trigger = new(holder = epicentre, on_turf_entered = /datum/extension/sanity_scan/proc/register_victim, on_turfs_changed = null, range = src.range)
-
+	trigger = new(holder = epicentre, on_turf_entered = /datum/extension/sanity_scan/proc/register_victim, on_turfs_changed = null, range = src.range, proc_owner = src)
+	trigger.register_turfs()

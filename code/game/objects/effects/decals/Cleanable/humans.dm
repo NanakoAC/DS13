@@ -57,6 +57,7 @@ var/global/list/image/splatter_cache=list()
 					qdel(B)
 	drytime = world.time + DRYING_TIME * (amount+1)
 	START_PROCESSING(SSobj, src)
+	SSsanity.register_passive_sanity_source(src, /datum/sanity_source/blood)
 
 /obj/effect/decal/cleanable/blood/Process()
 	if(world.time > drytime)

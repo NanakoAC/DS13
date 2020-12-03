@@ -924,6 +924,7 @@
 	species.setup_interaction(src)
 	species.setup_movement(src)
 	species.setup_vision(src)
+	species.setup_mentality(src)
 
 	if(species.language)
 		add_language(species.language)

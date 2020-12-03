@@ -589,3 +589,46 @@ proc
 
 /area/get_toplevel_atom()
 	return src
+
+
+/*
+	WARNING: Extremely expensive proc
+	Recommended to run from a caller which has waitfor set to 0, and is designed to work asynchronously
+	Setting allow_sleep to false will cause this to lockup the server for some period, not recommended
+
+	Function:
+	Given an origin point, this proc finds the best turf to see it and other things from.
+	Specifically, out of all the turfs which can be seen from origin, this finds which one can see the largest number of other turfs
+
+	Area only will restrict candidates to turfs in the same area as the origin
+*/
+/proc/find_best_viewpoint(var/turf/origin, var/range = 7, var/allow_sleep = TRUE, var/area_only = TRUE)
+	var/area/A = get_area(origin)
+
+	var/list/candidates = origin.turfs_in_view(range)
+	if (area_only)
+		candidates = (candidates & A.contents)
+
+	if (allow_sleep)
+		CHECK_TICK
+	var/best_total = length(candidates)
+	var/best_turf = origin
+	for (var/turf/candidate as anything in candidates)
+		if (allow_sleep)
+			CHECK_TICK
+
+		var/list/candidate_viewlist = candidate.turfs_in_view(range)
+
+		//If this is set, we only care how many turfs within the area it can see
+		if (area_only)
+			candidate_viewlist = (candidate_viewlist & A.contents)
+
+		var/candidate_total = length(candidate_viewlist)
+
+		//If it has more visible turfs than our current best, it becomes the new best
+		if (candidate_total > best_total)
+			best_total = candidate_total
+			best_turf = candidate
+
+
+	return best_turf

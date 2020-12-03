@@ -26,11 +26,30 @@
 #define SANITY_DAMAGE_DEATH	50	//Death itself is fairly damaging, but its usually accompanied by dismemberment and gore that add more insanity ontop of this
 #define SANITY_DAMAGE_MALFUNCTION	3.5	//Light flickering
 
+
+//Passive Sanity Damage: These use standardised values, it all blends together
+//All passive sanity damage values are per-second
+#define SANITY_DAMAGE_PASSIVE_LOW	0.03	//Bloodstains
+#define SANITY_DAMAGE_PASSIVE_MID	0.1		//Corpses
+#define SANITY_DAMAGE_PASSIVE_HIGH	0.4
+#define SANITY_DAMAGE_PASSIVE_EXTREME	1	//Marker and shards
+
+//Passive sanity damage from mobs. They only inflict this damage aura while alive, killing them stops it.
+//So to counterbalance that risk, they are far more powerful than immobile sources
+#define SANITY_DAMAGE_PASSIVE_MOB_LOW	1
+#define SANITY_DAMAGE_PASSIVE_MOB_MID	3
+#define SANITY_DAMAGE_PASSIVE_MOB_HIGH	6
+
 //Caps on sanity damage
 //Cap on sanity damage from active shouts from necromorphs
 #define SANITY_CAP_SHOUT	300
 #define SANITY_CAP_DISMEMBER	800	//Brutal violence has high limits
 #define SANITY_CAP_MALFUNCTION	200	//Malfunctioning machines are only mildly spooky
+
+/*
+	Sanity caps for passive things
+*/
+#define SANITY_CAP_BLOOD	300
 
 //Used for creating singleton dummy versions of sanity effects to hold in a global list, for validity checks
 #define REFERENCE	"reference"
@@ -71,8 +90,8 @@
 #define TAG_DEATH	"death"	//Witnessing sentient beings die
 #define TAG_SCREAM	"scream"	//Hearing necromorphs shouting
 #define TAG_MALFUNCTION "malfunction"	//Flickering/exploding lights, doors locking themselves. Machinery behaving strangely in general
-
-
+#define TAG_BLOOD	"blood"	//Bloodstains on floor, walls, and people
+#define TAG_MONSTER	"monster"	//Live necromorphs, scary illusions. Generally witnessing horrible creatures face to face
 
 /*
 	Cooldowns:

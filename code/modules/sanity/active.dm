@@ -8,14 +8,20 @@
 	Insanity from an active event.
 	These use soft capping, any insanity that would go over the limit is reduced, but not discarded
 */
-/mob/living/carbon/human/proc/add_active_insanity(var/datum/sanity_source/source, var/sanity_damage, var/sanity_limit, var/origin_atom)
+/mob/proc/add_active_insanity(var/datum/sanity_source/source, var/sanity_damage, var/sanity_limit, var/origin_atom)
 
-	if (!istype(source))
-		source = GLOB.all_sanity_sources[source]
+
+
+/mob/living/carbon/human/add_active_insanity(var/datum/sanity_source/source, var/sanity_damage, var/sanity_limit, var/origin_atom)
+
+
 
 	var/datum/mind/M = get_mind()
 	if (!M)
 		return FALSE
+
+	if (!istype(source))
+		source = GLOB.all_sanity_sources[source]
 
 	sanity_damage = (!isnull(sanity_damage)) ? sanity_damage : source.sanity_damage
 	sanity_limit = (!isnull(sanity_limit)) ? sanity_limit : source.sanity_limit
@@ -25,7 +31,6 @@
 	sanity_damage *= get_desensitisation_factor(source)
 
 
-	world << "[src] recieving active insanity [sanity_damage]/[sanity_limit] from [origin_atom]|[source]"
 	//Lets find out how much we can wholly add, up to the sanity_limit
 	var/clear = INFINITY
 
@@ -133,7 +138,6 @@
 	for (var/mob/living/carbon/human/H in listeners)
 		if (H == origin_atom)
 			continue
-		world << "Attempting to apply audible sanity damage to [H]"
 		//Ignore necromorphs and lunatics
 		if (!H.has_sanity())
 			continue

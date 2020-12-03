@@ -121,6 +121,8 @@
 	bump_flag 	= HEAVY
 	spawner_spawnable = FALSE
 
+	//Enhanced necros cause sanity damage
+	passive_sanity_type = /datum/sanity_source/monster
 
 	icon_template = 'icons/mob/necromorph/slasher_enhanced.dmi'
 	icon_lying = "_lying"

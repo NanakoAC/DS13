@@ -17,6 +17,8 @@
 	reach = 2
 	lasting_damage_factor = 0 //It regenerates this stuff away
 
+	passive_sanity_type = /datum/sanity_source/monster/high
+
 
 	icon_template = 'icons/mob/necromorph/ubermorph.dmi'
 	single_icon = FALSE
@@ -107,6 +109,9 @@ No amount of damage can finish it off, not even massive explosives can do the tr
 <br>\
 In addition, the ubermorph passively regenerates 4 health per second."
 
+#define UBERMORPH_PASSIVE_2	"<h2>PASSIVE: Psychic Trauma:</h2><br>\
+The ubermorph's powerful mind reaches out to humans around, haunting their thoughts. It emits constant sanity damage to all who see it"
+
 #define UBERMORPH_REGENERATE_DESC	"<h2>Regenerate:</h2><br>\
 The Ubermorph starts shaking and screaming in pain, as it regrows a missing limb and heals 40 health, over a period of 4 seconds. Even the head can be regrown."
 
@@ -137,6 +142,8 @@ Best used near the end, when all seems quiet, to help the necromorphs hunt down 
 /datum/species/necromorph/ubermorph/get_ability_descriptions()
 	.= ""
 	. += UBERMORPH_PASSIVE
+	. += "<hr>"
+	. += UBERMORPH_PASSIVE_2
 	. += "<hr>"
 	. += UBERMORPH_REGENERATE_DESC
 	. += "<hr>"

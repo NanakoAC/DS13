@@ -8,6 +8,7 @@
 		The Active variant is designed for highly mobile sources, ie mobs. Things that may move several times a second
 */
 /datum/extension/sanity_scan
+	flags = EXTENSION_FLAG_IMMEDIATE
 	var/atom/epicentre	//Where our visibility checks are done from
 
 	//This is an assoc list in the format atom = sanity_source datum
@@ -25,13 +26,34 @@
 
 	//If true, run an active scan for potential new victims
 	var/active_scan = FALSE
+	var/last_active_scan	//World time of the last time we scanned
 
-	var/range = WORLD_VIEW_RANGE
+
+
+	var/range = 7
+
+	//The last world time we saw a valid victim
+	var/last_victim_seen
+
+	//We need to have last seen a victim longer than this time ago, before we're allowed to stop processing
+	//0 by default, but 1 minute for the active scan
+	var/last_victim_timeout = 0
+
+/*
+	Called when we are no longer valid
+*/
+/datum/extension/sanity_scan/proc/abort_scan()
+	qdel(src)
+
 
 /datum/extension/sanity_scan/New(var/atom/_epicentre)
 	.=..()
 	epicentre = _epicentre
+	setup_detection()
 
+/datum/extension/sanity_scan/Destroy()
+	stop_active_processing()
+	.=..()
 
 /*
 	We only process when we have at least one valid victim
@@ -64,8 +86,12 @@
 		return
 
 	victims += H
-	if (!is_processing)
-		START_PROCESSING(SSobj, src)
+	last_victim_seen = world.time
+
+	//When we have any victims we enter active mode.
+	//This contains its own safety checks so we need no more here
+	start_active_processing()
+
 
 
 /datum/extension/sanity_scan/proc/unregister_victim(var/mob/living/carbon/human/H)
@@ -76,12 +102,29 @@
 	victims -= H
 
 /*
-	Adds a new thing as a source to this scanner
+	Adds a new thing as a source to this scanner. Return true if something was added or removed
 	Args:
 		Atom: The atom which is scary
 		Source: The sanity source datum that the atom is associated with
 		Recalculate: Set false to suppress automatically recalculating source data. Use it to prevent infinite loops
 */
+
+
+//just wrappers to be overridden for the active version
+/datum/extension/sanity_scan/proc/start_active_processing()
+	if (!is_processing)
+		START_PROCESSING(SSobj, src)
+		return TRUE
+
+
+/datum/extension/sanity_scan/proc/stop_active_processing()
+	if (is_processing)
+		STOP_PROCESSING(SSobj, src)
+		return TRUE
+
+
+
+
 /datum/extension/sanity_scan/proc/add_source(var/atom/thing, var/datum/sanity_source/source, var/recalculate = TRUE)
 	//Already registered
 	if ((thing in source_atoms))
@@ -91,6 +134,9 @@
 		source = GLOB.all_sanity_sources[source]
 
 	source_atoms[thing] = source
+	//Setup an event to remove the thing from our list if it gets deleted
+	GLOB.destroyed_event.register(thing, src, /datum/extension/sanity_scan/proc/remove_source)
+	.= TRUE
 	if (recalculate)
 		recalculate_source_data()
 
@@ -101,6 +147,8 @@
 
 	source_atoms -= thing
 
+	GLOB.destroyed_event.unregister(thing, src, /datum/extension/sanity_scan/proc/remove_source)
+	.= TRUE
 	if (recalculate)
 		recalculate_source_data()
 
@@ -140,7 +188,7 @@
 
 
 //Is it really okay to use this thing as an insanity source?
-/datum/extension/sanity_scan/proc/is_valid_source_atom(var/thing)
+/datum/extension/sanity_scan/proc/is_valid_source_atom(var/atom/thing)
 	.=TRUE
 
 	//If it doesnt exist, then no
@@ -166,7 +214,7 @@
 
 		if (!fail)
 			if (!viewlist)
-				viewlist = view(range, src)
+				viewlist = view(range, epicentre)
 
 			var/turf/T = get_turf(H)
 			if (!(T in viewlist))
@@ -175,6 +223,14 @@
 		//If validity failed, remove from the list
 		if (fail)
 			unregister_victim(H)
+
+	if (active_scan)
+		do_active_scan(viewlist)
+
+	//If theres any victims left, update this
+	if (LAZYLEN(victims))
+		last_victim_seen = world.time
+
 
 //Checks if this person is valid to be a victim right now.
 //Does not check location/distance, that is handled elsewhere
@@ -188,6 +244,69 @@
 
 	return TRUE
 
-	scare_victims()
 
-	try_stop_processing()
+
+/*
+	This proc scans the area around the epicentre and registers any new victims it can see
+	Only the active subtype does this
+
+	A viewlist can optionally be passed in to save on doing another view call
+*/
+/datum/extension/sanity_scan/proc/do_active_scan(var/list/viewlist)
+	last_active_scan = world.time
+	if (!viewlist)
+		viewlist = view(range, epicentre)
+
+	for (var/mob/living/carbon/human/H in viewlist)
+		if (H == epicentre)
+			continue
+		if (!is_valid_victim(H))
+			continue
+		register_victim(H)
+
+
+
+/*
+	This is run after validating the victim list
+	Here we apply insanity to all victims who are still valid
+
+	All safety checks are done so we can proceed immediately
+*/
+/datum/extension/sanity_scan/proc/scare_victims()
+	for (var/mob/living/carbon/human/H as anything in victims)
+		for (var/datum/sanity_source/source as anything in source_data)
+			var/list/data = source_data[source]
+			H.add_passive_insanity(source, data["sanity_damage"], data["sanity_limit"], epicentre)
+
+
+/*
+	Called each process step
+*/
+/datum/extension/sanity_scan/proc/try_stop_processing()
+	if (is_processing && can_stop_processing())
+		stop_active_processing()
+
+
+
+/*
+	Can we stop processing?
+
+*/
+/datum/extension/sanity_scan/can_stop_processing()
+	//If our host atom is gone, screw the other checks and stop immediately
+	if (QDELETED(epicentre))
+		return TRUE
+
+	//Not if there are any valid victims left
+	if (LAZYLEN(victims))
+		return FALSE
+
+
+	//How long has it been since we last saw a valid victim?
+	var/last_seen_delta = world.time - last_victim_seen
+	//If it hasn't been long enough, we can't rest yet
+	if (last_seen_delta < last_victim_timeout)
+		return FALSE
+
+
+	return TRUE

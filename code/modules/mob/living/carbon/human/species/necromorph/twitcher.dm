@@ -32,6 +32,8 @@
 	slowdown = 1.5
 	view_offset = 3 * WORLD_ICON_SIZE //Forward view offset allows longer-ranged charges
 
+	passive_sanity_type = /datum/sanity_source/monster
+
 	override_limb_types = list(
 	BP_L_ARM =  /obj/item/organ/external/arm/blade,
 	BP_R_ARM =  /obj/item/organ/external/arm/blade/right,

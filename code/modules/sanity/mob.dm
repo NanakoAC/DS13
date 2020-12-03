@@ -1,11 +1,10 @@
-/mob/living/carbon/human
+/mob/proc/get_insanity(var/include_courage, var/include_reserve)
+	return 0
 
-
-
-/mob/living/carbon/human/proc/get_insanity(var/include_courage, var/include_reserve)
+/mob/living/carbon/human/get_insanity(var/include_courage, var/include_reserve)
 	var/datum/mind/M = get_mind()
 	if (!M)
-		return FALSE
+		return 0
 	. = M.insanity
 
 	//Sanity reserved by active effects is calculated first, this does not go below zero
@@ -36,32 +35,6 @@
 
 
 
-/*
-	Insanity from a passive tick
-	These use hard capping
-*/
-/mob/living/carbon/human/proc/add_passive_insanity(var/datum/sanity_source/source, var/sanity_damage, var/sanity_limit, var/origin_atom)
-	var/datum/mind/M = get_mind()
-	if (!M)
-		return FALSE
-	if (!istype(source))
-		source = GLOB.all_sanity_sources[source]
-
-
-
-	var/current = get_insanity(FALSE, FALSE)
-	if (current >= sanity_limit)
-		//Hard cap, don't do anything
-		return
-
-	//Handle repeat things
-	sanity_damage *= get_desensitisation_factor(source)
-
-	M.insanity = max(current+sanity_damage, sanity_limit)
-
-
-	M.increment_sanity_log(source, sanity_damage)
-	//Possible future TODO: Trigger an observation indicating sanity was gained
 
 
 

@@ -9,6 +9,8 @@
 	mass = 120
 	limb_health_factor = 1.0
 
+	passive_sanity_type = /datum/sanity_source/monster
+
 	evasion = -10	//Slow and predictable
 
 	override_limb_types = list(

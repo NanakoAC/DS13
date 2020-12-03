@@ -15,7 +15,10 @@
 /datum/sanity_source
 	var/name = "spooky thing"
 	var/base_type = /datum/sanity_source	//Used to prevent abstract base classes from appearing in global lists
-	var/list/descriptions = list()	//Descriptions shown to most users, one is picked at random. Add as many to this list as you can imagine
+
+	//Descriptions shown to most users, one is picked at random. Add as many to this list as you can imagine
+
+	var/list/descriptions = list()
 	var/list/sanity_tags = list()
 
 	//These two values are both fallback/defaults. They can, and often will be overridden by the caller
@@ -48,6 +51,13 @@
 	sanity_damage = SANITY_DAMAGE_SCREAM
 	sanity_limit = SANITY_CAP_SHOUT
 
+
+//Repressed memories, only used by admins dealing sanity damage
+/datum/sanity_source/memory
+	descriptions = list("Something horrible happened, and i can't remember what",
+	"There's a hole in my memories",
+	"Why am I like this?",
+	"What have I done?")
 
 //Witnessing dismemberment
 /datum/sanity_source/dismember
@@ -113,13 +123,69 @@
 
 	desensitisation = DESEN_ACTIVE_LOW
 
+
+
+/*
+	Passive sources below here
+	!! Do not mix active and passive sources !!
+*/
+/datum/sanity_source/blood
+	name = "blood"
+	descriptions = list("So much blood",
+	"The walls are painted red",
+	"The deck runs crimson",
+	"Vital pigment stains this canvas",
+	"This vessel is a rich vermillion work of art",
+	"The tang of iron in the air",
+	"Red really livens up the dull industrial aesthetic")
+
+	sanity_tags = list(TAG_BLOOD)
+	sanity_damage = SANITY_DAMAGE_PASSIVE_LOW
+
+	sanity_limit = SANITY_CAP_BLOOD
+
+	desensitisation = DESEN_PASSIVE_LOW
+
+
+/*
+	Seeing live necromorphs in person. And possibly other horrible non-necromorph monsters
+	May include illusory creatures
+
+	Make subtypes to vary the sanity damage
+*/
+/datum/sanity_source/monster
+	name = "monster"
+	descriptions = list("Oh god its horrible",
+	"What the fuck was that thing?",
+	"Is it still chasing me?",
+	"Monstrous creatures stalk the halls",
+	"How did that monster get aboard?",
+	"It looked vaguely human...")
+
+	sanity_tags = list(TAG_MONSTER)
+	sanity_damage = SANITY_DAMAGE_PASSIVE_MOB_LOW
+
+	//No limit on sanity damage, it can drive you all the way to suicide just by standing infront of you
+	//Honestly quite a reasonable alternative to being torn apart
+
+	//Even though its a powerful source, you don't easily get used to them because monsters are mobile, intelligent and adaptive
+	desensitisation = DESEN_PASSIVE_LOW
+
+//Subtype used only for Tier IV monsters like ubermorph
+/datum/sanity_source/monster/mid
+	sanity_damage = SANITY_DAMAGE_PASSIVE_MOB_MID
+
+/datum/sanity_source/monster/high
+	sanity_damage = SANITY_DAMAGE_PASSIVE_MOB_HIGH
+
+
 /*
 	TODO:
-	Gore/blood
+	Gore
 	gibbing
 	psychic pulses
-	horrible visage
 	corruption nodes
 	gaze
 	whispers
+	Runes/graffiti
 */

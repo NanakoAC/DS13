@@ -235,9 +235,15 @@
 
 	// Mental/sanity vars
 	var/has_sanity = TRUE	//If true, this species can gain insanity
+	var/passive_sanity_type	=	null //Set to a subtype of /datum/sanity_source/monster to make this creature emit sanity damage against all humans who witness it
+
+
 	var/dismember_sanity_damage	=	SANITY_DAMAGE_DISMEMBER	//Witnessing this species being dismembered causes this much sanity damage
 	var/shout_sanity_damage = SANITY_DAMAGE_SCREAM	//This creature's screams cause up to this much sanity damage in those who hear it
 	var/death_sanity_damage	= SANITY_DAMAGE_DEATH	//Witnessing the death of this creature causes this much sanity damage
+
+
+
 
 	/*--------------------------
 		ORGAN HANDLING
@@ -426,8 +432,10 @@ The slots that you can use are found in items_clothing.dm and are the inventory 
 		else
 			H.set_darksight_range(darksight_range)
 
-
-
+//Setup things relating to the mind and sanity
+/datum/species/proc/setup_mentality(var/mob/living/carbon/human/H)
+	if (passive_sanity_type)
+		H.register_mobile_passive_sanity_source(passive_sanity_type)
 
 /datum/species/proc/sanitize_name(var/name)
 	return sanitizeName(name)

@@ -18,6 +18,8 @@
 	step_volume = 10
 	virus_immune = 1
 
+	passive_sanity_type = /datum/sanity_source/monster
+
 	//Acid has long since burned out its eyes, somehow the puker sees without them
 	override_organ_types = list(BP_EYES = null)
 	vision_organ = null
@@ -81,7 +83,9 @@ When the puker loses a limb, a wave of acid spurts out in all directions, dousin
 
 #define PUKER_PASSIVE_2	"<h2>PASSIVE: Eyeless Horror:</h2><br>\
 Constant exposure to corrosion has long since burned out its eyes, and the puker has learned to cope without them.<br>\
-As a result, puker is not blinded if its head is cut off. However, losing its head will affect the vomit ability."
+As a result, puker is not blinded if its head is cut off. However, losing its head will affect the vomit ability.\
+\
+In addition, the horrific appearance of the puker impacts the sanity of those who see it"
 
 #define PUKER_PASSIVE_3	"<h2>PASSIVE: Crippling Acid:</h2><br>\
 All of your abilities douse the victims in acid, which slows their movement speed by 30% as long as its on them."
