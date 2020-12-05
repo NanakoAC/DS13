@@ -7,7 +7,7 @@
 	atom_flags = ATOM_FLAG_OPEN_CONTAINER
 	w_class = ITEM_SIZE_SMALL
 	throwforce = 0
-	
+
 	throw_range = 20
 	var/key_data
 
@@ -30,12 +30,13 @@
 	//So this is a workaround. This also makes more sense from an IC standpoint. ~Carn
 	if(user.client && (target in user.client.screen))
 		to_chat(user, "<span class='notice'>You need to take that [target.name] off before cleaning it.</span>")
-	else if(istype(target,/obj/effect/decal/cleanable/blood))
-		to_chat(user, "<span class='notice'>You scrub \the [target.name] out.</span>")
-		target.clean_blood() //Blood is a cleanable decal, therefore needs to be accounted for before all cleanable decals.
-	else if(istype(target,/obj/effect/decal/cleanable))
-		to_chat(user, "<span class='notice'>You scrub \the [target.name] out.</span>")
-		qdel(target)
+	else if(istype(target,/obj/effect/decal))
+		var/obj/effect/decal/D = target
+		if (D.cleanable)
+			to_chat(user, "<span class='notice'>You scrub \the [target.name] out.</span>")
+			target.clean_blood() //Blood is a cleanable decal, therefore needs to be accounted for before all cleanable decals.
+		else
+			return ..()
 	else if(istype(target,/turf))
 		to_chat(user, "<span class='notice'>You scrub \the [target.name] clean.</span>")
 		var/turf/T = target

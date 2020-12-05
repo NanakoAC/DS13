@@ -104,6 +104,7 @@
 
 	desensitisation = DESEN_ACTIVE_MED
 
+//Machinery acting strangely. Lights flickering, doors locking, etc
 /datum/sanity_source/malfunction
 	name = "malfunction"
 	descriptions = list("I swear this ship is haunted",
@@ -122,6 +123,32 @@
 	sanity_limit = SANITY_CAP_MALFUNCTION
 
 	desensitisation = DESEN_ACTIVE_LOW
+
+
+
+//Paranormal vision. Applied in the biggest quantity by eye/gaze nodes, and in much smaller quantities by scry and tracer spells
+/datum/sanity_source/gaze
+	name = "gaze"
+	descriptions = list("I always feel like somebody's watching me",
+	"It sees us. It knows our sins",
+	"Someone is spying on me",
+	"Am I being followed?",
+	"I cannot escape its gaze",
+	"Shadows in the corner of my eye. They withdraw when I look",
+	"It knows me",
+	"Something looks down upon us",
+	"We are being monitored",
+	"They know")
+
+	sanity_tags = list(TAG_MALFUNCTION)
+	sanity_damage = SANITY_DAMAGE_GAZE
+
+	sanity_limit = SANITY_CAP_MALFUNCTION
+
+	desensitisation = DESEN_ACTIVE_LOW
+
+
+
 
 
 
@@ -179,6 +206,77 @@
 	sanity_damage = SANITY_DAMAGE_PASSIVE_MOB_HIGH
 
 
+
+/*
+	Runes, wall writing, other seemingly man-made defacement and signs of unhingement
+*/
+/datum/sanity_source/graffiti
+	name = "graffiti"
+	descriptions = list("Who scrawled all this stuff on the floor?",
+	"Do we have vandals onboard? Stowaways?",
+	"Did Unitologists write this stuff?",
+	"Who would paint these horrible symbols?",
+	"What kind of madmen do we have aboard?",
+	"What was that written in? Surely red paint?")
+
+	sanity_tags = list(TAG_GRAFFITI)
+	sanity_damage = SANITY_DAMAGE_PASSIVE_MID	//Graffiti is a bit more disturbing initially
+
+	sanity_limit = SANITY_CAP_GRAFFITI	//But it has a low cap
+
+	desensitisation = DESEN_PASSIVE_HIGH	//And you quickly get used to it
+
+
+/*
+	The marker has two different sanity auras depending on whether or not its active
+*/
+/datum/sanity_source/marker_inactive
+	name = "marker inactive"
+	descriptions = list("There's something strange about this rock",
+	"Who would create an obelisk like this?",
+	"What purpose did this Marker serve? How old is it?",
+	"I feel uneasy looking at this Marker",
+	"Feels like an itch behind my eyes",
+	"Was this thing made by aliens?",
+	"How long has the government been hiding this from us?")
+
+	sanity_tags = list(TAG_ALIEN)
+	sanity_damage = SANITY_DAMAGE_PASSIVE_EXTREME
+
+	sanity_limit = SANITY_CAP_MARKER_INACTIVE
+
+	desensitisation = DESEN_PASSIVE_LOW
+
+
+
+
+/*
+	The marker, once active, is an unspeakably powerful source of sanity damage. Staring at it for a few minutes will bring death
+	Foolish humans who wander into its chamber and get locked in, are gonna have a bad time
+*/
+/datum/sanity_source/marker_active
+	name = "marker active"
+	descriptions = list("The marker calls to us, all must answer",
+	"It is beautiful, glorious",
+	"The runes are searing revelation burned into my soul",
+	"Its hunger is endless, and we are all sustenance",
+	"THEY ARE COMING THEY ARE COMING THEY ARE COMING",
+	"Kneel and pray, for before us stands Glory",
+	"We are to be uplifted, whether we are ready or not",
+	"The abyss stares back. I am unworthy")
+
+	sanity_tags = list(TAG_ALIEN)
+	sanity_damage = SANITY_DAMAGE_PASSIVE_MARKER
+
+	//Uncapped
+
+	desensitisation = DESEN_NONE	//You do not adapt to this
+
+
+
+
+
+
 /*
 	TODO:
 	Gore
@@ -187,5 +285,5 @@
 	corruption nodes
 	gaze
 	whispers
-	Runes/graffiti
+	Marker Shards
 */

@@ -9,6 +9,7 @@
 */
 /datum/extension/sanity_scan
 	flags = EXTENSION_FLAG_IMMEDIATE
+	base_type = /datum/extension/sanity_scan
 	var/atom/epicentre	//Where our visibility checks are done from
 
 	//This is an assoc list in the format atom = sanity_source datum

@@ -52,6 +52,13 @@
 		return
 	active = TRUE
 
+	//Switch the sanity aura to the active version/
+	//First, remove the inactive one
+	remove_extension(src, /datum/extension/sanity_scan)
+
+	//Then add a new active version
+	register_standalone_passive_sanity_source(/datum/sanity_source/marker_active)
+
 	//Any shards in the world become active
 	for (var/obj/item/marker_shard/MS in SSnecromorph.shards)
 		MS.activate()
@@ -74,6 +81,8 @@
 	.=..()
 	shop = new(src)//Create necroshop datum
 	GLOB.necrovision.add_source(src)	//Add it as the first source for necrovision
+	register_standalone_passive_sanity_source(/datum/sanity_source/marker_inactive)
+
 	add_biomass_source(null, 0, 1, /datum/biomass_source/baseline)	//Add the baseline income
 
 	//Lets create a proximity tracker to detect corpses being dragged into our vicinity

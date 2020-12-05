@@ -1,4 +1,4 @@
-/obj/effect/rune
+/obj/effect/decal/rune
 	name = "rune"
 	desc = "A strange collection of symbols drawn in blood."
 	anchored = 1
@@ -8,20 +8,27 @@
 	plane = ABOVE_TURF_PLANE
 	layer = RUNE_LAYER
 
+	cleanable = TRUE
+
 	var/blood
 	var/bcolor
 	var/strokes = 2 // IF YOU EVER SET THIS TO MORE THAN TEN, EVERYTHING WILL BREAK
 	var/cultname = ""
+	passive_sanity_type = /datum/sanity_source/graffiti
 
-/obj/effect/rune/New(var/loc, var/blcolor = "#c80000", var/nblood = "blood")
-	..()
+/obj/effect/decal/rune/New(var/loc, var/blcolor = "#c80000", var/nblood = "blood")
+
 	bcolor = blcolor
 	blood = nblood
+	..()
+
+/obj/effect/decal/rune/Initialize()
+	.=..()
 	update_icon()
 	alpha = 0
 	animate(src, alpha = 255, time = 1 SECOND, flags = ANIMATION_PARALLEL)	//Cool fade in effect
 
-/obj/effect/rune/update_icon()
+/obj/effect/decal/rune/update_icon()
 	overlays.Cut()
 	if(GLOB.cult.rune_strokes[type])
 		var/list/f = GLOB.cult.rune_strokes[type]
@@ -41,12 +48,12 @@
 	color = bcolor
 	desc = "A strange collection of symbols drawn in [blood]."
 
-/obj/effect/rune/examine(var/mob/user)
+/obj/effect/decal/rune/examine(var/mob/user)
 	. = ..()
 	if(iscultist(user))
 		to_chat(user, "This is \a [cultname] rune.")
 
-/obj/effect/rune/attackby(var/obj/item/I, var/mob/living/user)
+/obj/effect/decal/rune/attackby(var/obj/item/I, var/mob/living/user)
 	if(istype(I, /obj/item/weapon/book/tome) && iscultist(user))
 		user.visible_message("<span class='notice'>[user] rubs \the [src] with \the [I], and \the [src] is absorbed by it.</span>", "You retrace your steps, carefully undoing the lines of \the [src].")
 		qdel(src)
@@ -56,7 +63,7 @@
 		qdel(src)
 		return
 
-/obj/effect/rune/attack_hand(var/mob/living/user)
+/obj/effect/decal/rune/attack_hand(var/mob/living/user)
 	if(!iscultist(user))
 		to_chat(user, "You can't mouth the arcane scratchings without fumbling over them.")
 		return
@@ -68,38 +75,38 @@
 		return fizzle(user)
 	cast(user)
 
-/obj/effect/rune/attack_ai(var/mob/living/user) // Cult borgs!
+/obj/effect/decal/rune/attack_ai(var/mob/living/user) // Cult borgs!
 	if(Adjacent(user))
 		attack_hand(user)
 
-/obj/effect/rune/attack_generic(var/mob/living/user) // Cult constructs/slimes/whatnot!
+/obj/effect/decal/rune/attack_generic(var/mob/living/user) // Cult constructs/slimes/whatnot!
 	attack_hand(user)
 
-/obj/effect/rune/proc/cast(var/mob/living/user)
+/obj/effect/decal/rune/proc/cast(var/mob/living/user)
 	fizzle(user)
 
-/obj/effect/rune/proc/get_cultists()
+/obj/effect/decal/rune/proc/get_cultists()
 	. = list()
 	for(var/mob/living/M in range(1))
 		if(iscultist(M))
 			. += M
 
-/obj/effect/rune/proc/fizzle(var/mob/living/user)
+/obj/effect/decal/rune/proc/fizzle(var/mob/living/user)
 	visible_message("<span class='warning'>The markings pulse with a small burst of light, then fall dark.</span>", "You hear a fizzle.")
 
 //Makes the speech a proc so all verbal components can be easily manipulated as a whole, or individually easily
-/obj/effect/rune/proc/speak_incantation(var/mob/living/user, var/incantation)
+/obj/effect/decal/rune/proc/speak_incantation(var/mob/living/user, var/incantation)
 	var/datum/language/L = all_languages[LANGUAGE_GUTTER]
 	if(incantation && (L in user.languages))
 		user.say(incantation, L)
 
 /* Tier 1 runes below */
 
-/obj/effect/rune/convert
+/obj/effect/decal/rune/convert
 	cultname = "convert"
 	var/spamcheck = 0
 
-/obj/effect/rune/convert/cast(var/mob/living/user)
+/obj/effect/decal/rune/convert/cast(var/mob/living/user)
 	if(spamcheck)
 		return
 
@@ -140,34 +147,34 @@
 						to_chat(target, "<span class='cult'>Your mind turns to ash as the burning flames engulf your very soul and images of an unspeakable horror begin to bombard the last remnants of mental resistance.</span>")
 						target.take_overall_damage(0, 10)
 
-/obj/effect/rune/convert/Topic(href, href_list)
+/obj/effect/decal/rune/convert/Topic(href, href_list)
 	if(href_list["join"])
 		if(usr.loc == loc && !iscultist(usr))
 			GLOB.cult.add_antagonist(usr.mind, ignore_role = 1, do_not_equip = 1)
 
-/obj/effect/rune/teleport
+/obj/effect/decal/rune/teleport
 	cultname = "teleport"
 	var/destination
 
-/obj/effect/rune/teleport/New()
+/obj/effect/decal/rune/teleport/New()
 	..()
 	var/area/A = get_area(src)
 	destination = A.name
 	GLOB.cult.teleport_runes += src
 
-/obj/effect/rune/teleport/Destroy()
+/obj/effect/decal/rune/teleport/Destroy()
 	GLOB.cult.teleport_runes -= src
 	var/turf/T = get_turf(src)
 	for(var/atom/movable/A in contents)
 		A.forceMove(T)
 	return ..()
 
-/obj/effect/rune/teleport/examine(var/mob/user)
+/obj/effect/decal/rune/teleport/examine(var/mob/user)
 	. = ..()
 	if(iscultist(user))
 		to_chat(user, "Its name is [destination].")
 
-/obj/effect/rune/teleport/cast(var/mob/living/user)
+/obj/effect/decal/rune/teleport/cast(var/mob/living/user)
 	if(user.loc == src)
 		showOptions(user)
 	else if(user.loc == get_turf(src))
@@ -199,50 +206,50 @@
 			return
 		destination = sanitize(input)
 
-/obj/effect/rune/teleport/Topic(href, href_list)
+/obj/effect/decal/rune/teleport/Topic(href, href_list)
 	if(usr.loc != src)
 		return
 	if(href_list["target"])
-		var/obj/effect/rune/teleport/targ = locate(href_list["target"])
+		var/obj/effect/decal/rune/teleport/targ = locate(href_list["target"])
 		if(istype(targ)) // Checks for null, too
 			usr.forceMove(targ)
 			targ.showOptions(usr)
 	else if(href_list["leave"])
 		leaveRune(usr)
 
-/obj/effect/rune/teleport/proc/showOptions(var/mob/living/user)
+/obj/effect/decal/rune/teleport/proc/showOptions(var/mob/living/user)
 	var/list/t = list()
-	for(var/obj/effect/rune/teleport/T in GLOB.cult.teleport_runes)
+	for(var/obj/effect/decal/rune/teleport/T in GLOB.cult.teleport_runes)
 		if(T == src)
 			continue
 		t += "<a href='?src=\ref[src];target=\ref[T]'>[T.destination]</a>"
 	to_chat(user, "Teleport runes: [english_list(t, nothing_text = "no other runes exist")]... or <a href='?src=\ref[src];leave=1'>return from this rune</a>.")
 
-/obj/effect/rune/teleport/proc/leaveRune(var/mob/living/user)
+/obj/effect/decal/rune/teleport/proc/leaveRune(var/mob/living/user)
 	if(user.loc != src)
 		return
 	user.forceMove(get_turf(src))
 	user.visible_message("<span class='warning'>\The [user] appears in a flash of red light!</span>", "<span class='warning'>You feel as your body gets thrown out of the dimension of Nar-Sie!</span>", "You hear a pop.")
 
-/obj/effect/rune/tome
+/obj/effect/decal/rune/tome
 	cultname = "summon tome"
 
-/obj/effect/rune/tome/cast(var/mob/living/user)
+/obj/effect/decal/rune/tome/cast(var/mob/living/user)
 	new /obj/item/weapon/book/tome(get_turf(src))
 	speak_incantation(user, "N[pick("'","`")]ath reth sh'yro eth d'raggathnor!")
 	visible_message("<span class='notice'>\The [src] disappears with a flash of red light, and in its place now a book lies.</span>", "You hear a pop.")
 	qdel(src)
 
-/obj/effect/rune/wall
+/obj/effect/decal/rune/wall
 	cultname = "wall"
 
 	var/obj/effect/cultwall/wall = null
 
-/obj/effect/rune/wall/Destroy()
+/obj/effect/decal/rune/wall/Destroy()
 	QDEL_NULL(wall)
 	return ..()
 
-/obj/effect/rune/wall/cast(var/mob/living/user)
+/obj/effect/decal/rune/wall/cast(var/mob/living/user)
 	var/t
 	if(wall)
 		if(wall.health >= wall.max_health)
@@ -267,7 +274,7 @@
 	anchored = 1
 	density = 1
 	unacidable = 1
-	var/obj/effect/rune/wall/rune
+	var/obj/effect/decal/rune/wall/rune
 	health
 	max_health = 200
 
@@ -322,10 +329,10 @@
 		visible_message("<span class='warning'>\The [src] dissipates.</span>")
 		qdel(src)
 
-/obj/effect/rune/ajorney
+/obj/effect/decal/rune/ajorney
 	cultname = "astral journey"
 
-/obj/effect/rune/ajorney/cast(var/mob/living/user)
+/obj/effect/decal/rune/ajorney/cast(var/mob/living/user)
 	var/tmpkey = user.key
 	if(user.loc != get_turf(src))
 		return
@@ -349,10 +356,10 @@
 		sleep(20)
 	fizzle(user)
 
-/obj/effect/rune/defile
+/obj/effect/decal/rune/defile
 	cultname = "defile"
 
-/obj/effect/rune/defile/cast(var/mob/living/user)
+/obj/effect/decal/rune/defile/cast(var/mob/living/user)
 	speak_incantation(user, "Ia! Ia! Zasan therium viortia!")
 	for(var/turf/T in range(1, src))
 		if(T.holy)
@@ -363,12 +370,12 @@
 	qdel(src)
 
 /* Tier 2 runes */
-/obj/effect/rune/offering
+/obj/effect/decal/rune/offering
 	cultname = "offering"
 	strokes = 3
 	var/mob/living/victim
 
-/obj/effect/rune/offering/cast(var/mob/living/user)
+/obj/effect/decal/rune/offering/cast(var/mob/living/user)
 	var/list/mob/living/cultists = get_cultists()
 	if(victim)
 		to_chat(user, "<span class='warning'>You are already sarcificing \the [victim] on this rune.</span>")
@@ -438,11 +445,11 @@
 		victim = null
 
 
-/obj/effect/rune/drain
+/obj/effect/decal/rune/drain
 	cultname = "blood drain"
 	strokes = 3
 
-/obj/effect/rune/drain/cast(var/mob/living/user)
+/obj/effect/decal/rune/drain/cast(var/mob/living/user)
 	var/mob/living/carbon/human/victim
 	for(var/mob/living/carbon/human/M in get_turf(src))
 		if(iscultist(M))
@@ -459,7 +466,7 @@
 	user.visible_message("<span class='warning'>Blood flows from \the [src] into \the [user]!</span>", "<span class='cult'>The blood starts flowing from \the [src] into your frail mortal body. [capitalize(english_list(heal_user(user), nothing_text = "you feel no different"))].</span>", "You hear liquid flow.")
 	user.set_click_cooldown(DEFAULT_ATTACK_COOLDOWN)
 
-/obj/effect/rune/drain/proc/heal_user(var/mob/living/carbon/human/user)
+/obj/effect/decal/rune/drain/proc/heal_user(var/mob/living/carbon/human/user)
 	if(!istype(user))
 		return list("you feel no different")
 	var/list/statuses = list()
@@ -545,19 +552,19 @@
 		M.fire_stacks = max(2, M.fire_stacks)
 		M.IgniteMob()
 
-/obj/effect/rune/emp
+/obj/effect/decal/rune/emp
 	cultname = "emp"
 	strokes = 4
 
-/obj/effect/rune/emp/cast(var/mob/living/user)
+/obj/effect/decal/rune/emp/cast(var/mob/living/user)
 	empulse(get_turf(src), 4, 2, 1)
 	speak_incantation(user, "Ta'gh fara[pick("'","`")]qha fel d'amar det!")
 	qdel(src)
 
-/obj/effect/rune/massdefile //Defile but with a huge range. Bring a buddy for this, you're hitting the floor.
+/obj/effect/decal/rune/massdefile //Defile but with a huge range. Bring a buddy for this, you're hitting the floor.
 	cultname = "mass defile"
 
-/obj/effect/rune/massdefile/cast(var/mob/living/user)
+/obj/effect/decal/rune/massdefile/cast(var/mob/living/user)
 	var/list/mob/living/cultists = get_cultists()
 	if(cultists.len < 3)
 		to_chat(user, "<span class='warning'>You need three cultists around this rune to make it work.</span>")
@@ -575,11 +582,11 @@
 
 /* Tier 3 runes */
 
-/obj/effect/rune/weapon
+/obj/effect/decal/rune/weapon
 	cultname = "summon weapon"
 	strokes = 4
 
-/obj/effect/rune/weapon/cast(var/mob/living/user)
+/obj/effect/decal/rune/weapon/cast(var/mob/living/user)
 	if(!istype(user.get_equipped_item(slot_head), /obj/item/clothing/head/culthood) || !istype(user.get_equipped_item(slot_wear_suit), /obj/item/clothing/suit/cultrobes) || !istype(user.get_equipped_item(slot_shoes), /obj/item/clothing/shoes/cult))
 		to_chat(user, "<span class='warning'>You need to be wearing your robes to use this rune.</span>")
 		return fizzle(user)
@@ -591,11 +598,11 @@
 	user.put_in_hands(new /obj/item/weapon/melee/cultblade(user))
 	qdel(src)
 
-/obj/effect/rune/shell
+/obj/effect/decal/rune/shell
 	cultname = "summon shell"
 	strokes = 4
 
-/obj/effect/rune/shell/cast(var/mob/living/user)
+/obj/effect/decal/rune/shell/cast(var/mob/living/user)
 	var/turf/T = get_turf(src)
 	if(T.icon_state != "cult" && T.icon_state != "cult-narsie")
 		to_chat(user, "<span class='warning'>This rune needs to be placed on the defiled ground.</span>")
@@ -617,11 +624,11 @@
 	visible_message("<span class='warning'>The metal bends into \the [O], and \the [src] imbues into it.</span>", "You hear a metallic sound.")
 	qdel(src)
 
-/obj/effect/rune/confuse
+/obj/effect/decal/rune/confuse
 	cultname = "confuse"
 	strokes = 4
 
-/obj/effect/rune/confuse/cast(var/mob/living/user)
+/obj/effect/decal/rune/confuse/cast(var/mob/living/user)
 	speak_incantation(user, "Fuu ma[pick("'","`")]jin!")
 	visible_message("<span class='danger'>\The [src] explodes in a bright flash.</span>")
 	var/list/mob/affected = list()
@@ -643,11 +650,11 @@
 	admin_attacker_log_many_victims(user, affected, "Used a confuse rune.", "Was victim of a confuse rune.", "used a confuse rune on")
 	qdel(src)
 
-/obj/effect/rune/revive
+/obj/effect/decal/rune/revive
 	cultname = "revive"
 	strokes = 4
 
-/obj/effect/rune/revive/cast(var/mob/living/user)
+/obj/effect/decal/rune/revive/cast(var/mob/living/user)
 	var/mob/living/carbon/human/target
 	var/obj/item/device/soulstone/source
 	for(var/mob/living/carbon/human/M in get_turf(src))
@@ -669,11 +676,11 @@
 	speak_incantation(user, "Pasnar val'keriam usinar. Savrae ines amutan. Yam'toth remium il'tarat!")
 	target.visible_message("<span class='warning'>\The [target]'s eyes glow with a faint red as \he stands up, slowly starting to breathe again.</span>", "<span class='warning'>Life... I'm alive again...</span>", "You hear liquid flow.")
 
-/obj/effect/rune/blood_boil
+/obj/effect/decal/rune/blood_boil
 	cultname = "blood boil"
 	strokes = 4
 
-/obj/effect/rune/blood_boil/cast(var/mob/living/user)
+/obj/effect/decal/rune/blood_boil/cast(var/mob/living/user)
 	var/list/mob/living/cultists = get_cultists()
 	if(cultists.len < 3)
 		return fizzle()
@@ -704,14 +711,14 @@
 
 /* Tier NarNar runes */
 
-/obj/effect/rune/tearreality
+/obj/effect/decal/rune/tearreality
 	cultname = "tear reality"
 	var/the_end_comes = 0
 	var/the_time_has_come = 300
 	var/obj/singularity/narsie/large/HECOMES = null
 	strokes = 9
 
-/obj/effect/rune/tearreality/cast(var/mob/living/user)
+/obj/effect/decal/rune/tearreality/cast(var/mob/living/user)
 	if(!GLOB.cult.allow_narsie)
 		return
 	if(the_end_comes)
@@ -752,7 +759,7 @@
 		command_announcement.Announce("Bluespace anomaly has ceased.")
 		qdel(src)
 
-/obj/effect/rune/tearreality/attack_hand(var/mob/living/user)
+/obj/effect/decal/rune/tearreality/attack_hand(var/mob/living/user)
 	..()
 	if(HECOMES && !iscultist(user))
 		var/input = input(user, "Are you SURE you want to sacrifice yourself?", "DO NOT DO THIS") in list("Yes", "No")
@@ -772,18 +779,18 @@
 		qdel(src)
 		return
 
-/obj/effect/rune/tearreality/attackby()
+/obj/effect/decal/rune/tearreality/attackby()
 	if(the_end_comes)
 		return
 	..()
 
 /* Imbue runes */
 
-/obj/effect/rune/imbue
+/obj/effect/decal/rune/imbue
 	cultname = "otherwordly abomination that shouldn't exist and that you should report to your local god as soon as you see it, along with the instructions for making this"
 	var/papertype
 
-/obj/effect/rune/imbue/cast(var/mob/living/user)
+/obj/effect/decal/rune/imbue/cast(var/mob/living/user)
 	var/obj/item/weapon/paper/target
 	var/tainted = 0
 	for(var/obj/item/weapon/paper/P in get_turf(src))
@@ -802,6 +809,6 @@
 	qdel(target)
 	qdel(src)
 
-/obj/effect/rune/imbue/emp
+/obj/effect/decal/rune/imbue/emp
 	cultname = "destroy technology imbue"
 	papertype = /obj/item/weapon/paper/talisman/emp

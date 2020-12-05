@@ -5,7 +5,7 @@
 /datum/signal_ability/scry
 	name = "Scry"
 	id = "scry"
-	desc = "Reveals a targeted area in a 6 tile radius for a duration of 1 minute. Creates a spooky ethereal glow there too."
+	desc = "Reveals a targeted area in a 6 tile radius for a duration of 1 minute. Creates a spooky ethereal glow there too which unsettles nearby humans."
 	target_string = "any blackspace outside the necrovision network"
 	energy_cost = 20
 	require_corruption = FALSE
@@ -40,6 +40,9 @@
 
 	set_light(1, 1, 6, 2, COLOR_NECRO_YELLOW)
 	QDEL_IN(src, lifespan)
+
+	//Scrying deals minor sanity damage
+	visible_sanity_damage(/datum/sanity_source/gaze, SANITY_DAMAGE_ACTIVE_LOW, src)
 
 //Prevent it getting blown up
 /obj/effect/scry_eye/ex_act()

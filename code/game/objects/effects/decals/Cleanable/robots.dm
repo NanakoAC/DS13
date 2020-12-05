@@ -5,6 +5,7 @@
 	icon_state = "gib1"
 	basecolor = SYNTH_BLOOD_COLOUR
 	random_icon_states = list("gib1", "gib2", "gib3", "gib4", "gib5", "gib6", "gib7")
+	passive_sanity_type = null
 
 /obj/effect/decal/cleanable/blood/gibs/robot/update_icon()
 	color = "#ffffff"
@@ -39,6 +40,7 @@
 
 /obj/effect/decal/cleanable/blood/oil
 	basecolor = SYNTH_BLOOD_COLOUR
+	passive_sanity_type = null
 
 /obj/effect/decal/cleanable/blood/oil/dry()
 	return

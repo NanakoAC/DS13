@@ -47,7 +47,7 @@
 	if(!istype(T, /turf/simulated))
 		to_chat(src, "<span class='warning'>You need more space to draw a rune here.</span>")
 		return
-	if(locate(/obj/effect/rune) in T)
+	if(locate(/obj/effect/decal/rune) in T)
 		to_chat(src, "<span class='warning'>There's already a rune here.</span>") // Don't cross the runes
 		return
 	if(T.icon_state == "cult" || T.icon_state == "cult-narsie")
@@ -89,9 +89,9 @@
 	visible_message("<span class='warning'>\The [src] slices open a finger and begins to chant and paint symbols on the floor.</span>", "<span class='notice'>[self]</span>", "You hear chanting.")
 	if(do_after(src, timer))
 		pay_for_rune(cost * damage)
-		if(locate(/obj/effect/rune) in T)
+		if(locate(/obj/effect/decal/rune) in T)
 			return
-		var/obj/effect/rune/R = new rune(T, get_rune_color(), get_blood_name())
+		var/obj/effect/decal/rune/R = new rune(T, get_rune_color(), get_blood_name())
 		var/area/A = get_area(R)
 		log_and_message_admins("created \an [R.cultname] rune at \the [A.name] - [loc.x]-[loc.y]-[loc.z].")
 		R.add_fingerprint(src)
@@ -171,49 +171,49 @@ var/list/Tier4Runes = list(
 	set category = "Cult Magic"
 	set name = "Rune: Convert"
 
-	make_rune(/obj/effect/rune/convert, tome_required = 1)
+	make_rune(/obj/effect/decal/rune/convert, tome_required = 1)
 
 /mob/proc/teleport_rune()
 	set category = "Cult Magic"
 	set name = "Rune: Teleport"
 
-	make_rune(/obj/effect/rune/teleport, tome_required = 1)
+	make_rune(/obj/effect/decal/rune/teleport, tome_required = 1)
 
 /mob/proc/tome_rune()
 	set category = "Cult Magic"
 	set name = "Rune: Summon Tome"
 
-	make_rune(/obj/effect/rune/tome, cost = 15)
+	make_rune(/obj/effect/decal/rune/tome, cost = 15)
 
 /mob/proc/wall_rune()
 	set category = "Cult Magic"
 	set name = "Rune: Wall"
 
-	make_rune(/obj/effect/rune/wall, tome_required = 1)
+	make_rune(/obj/effect/decal/rune/wall, tome_required = 1)
 
 /mob/proc/ajorney_rune()
 	set category = "Cult Magic"
 	set name = "Rune: Astral Journey"
 
-	make_rune(/obj/effect/rune/ajorney)
+	make_rune(/obj/effect/decal/rune/ajorney)
 
 /mob/proc/defile_rune()
 	set category = "Cult Magic"
 	set name = "Rune: Defile"
 
-	make_rune(/obj/effect/rune/defile, tome_required = 1)
+	make_rune(/obj/effect/decal/rune/defile, tome_required = 1)
 
 /mob/proc/massdefile_rune()
 	set category = "Cult Magic"
 	set name = "Rune: Mass Defile"
 
-	make_rune(/obj/effect/rune/massdefile, tome_required = 1, cost = 20)
+	make_rune(/obj/effect/decal/rune/massdefile, tome_required = 1, cost = 20)
 
 /mob/proc/offering_rune()
 	set category = "Cult Magic"
 	set name = "Rune: Offering"
 
-	make_rune(/obj/effect/rune/offering, tome_required = 1)
+	make_rune(/obj/effect/decal/rune/offering, tome_required = 1)
 
 
 
@@ -221,55 +221,55 @@ var/list/Tier4Runes = list(
 	set category = "Cult Magic"
 	set name = "Rune: Blood Drain"
 
-	make_rune(/obj/effect/rune/drain, tome_required = 1)
+	make_rune(/obj/effect/decal/rune/drain, tome_required = 1)
 
 /mob/proc/emp_rune()
 	set category = "Cult Magic"
 	set name = "Rune: EMP"
 
-	make_rune(/obj/effect/rune/emp, tome_required = 1)
+	make_rune(/obj/effect/decal/rune/emp, tome_required = 1)
 
 /mob/proc/weapon_rune()
 	set category = "Cult Magic"
 	set name = "Rune: Summon Weapon"
 
-	make_rune(/obj/effect/rune/weapon, tome_required = 1)
+	make_rune(/obj/effect/decal/rune/weapon, tome_required = 1)
 
 /mob/proc/shell_rune()
 	set category = "Cult Magic"
 	set name = "Rune: Summon Shell"
 
-	make_rune(/obj/effect/rune/shell, cost = 10, tome_required = 1)
+	make_rune(/obj/effect/decal/rune/shell, cost = 10, tome_required = 1)
 
 /mob/proc/bloodboil_rune()
 	set category = "Cult Magic"
 	set name = "Rune: Blood Boil"
 
-	make_rune(/obj/effect/rune/blood_boil, cost = 20, tome_required = 1)
+	make_rune(/obj/effect/decal/rune/blood_boil, cost = 20, tome_required = 1)
 
 /mob/proc/confuse_rune()
 	set category = "Cult Magic"
 	set name = "Rune: Confuse"
 
-	make_rune(/obj/effect/rune/confuse)
+	make_rune(/obj/effect/decal/rune/confuse)
 
 /mob/proc/revive_rune()
 	set category = "Cult Magic"
 	set name = "Rune: Revive"
 
-	make_rune(/obj/effect/rune/revive, tome_required = 1)
+	make_rune(/obj/effect/decal/rune/revive, tome_required = 1)
 
 /mob/proc/tearreality_rune()
 	set category = "Cult Magic"
 	set name = "Rune: Tear Reality"
 
-	make_rune(/obj/effect/rune/tearreality, cost = 50, tome_required = 1)
+	make_rune(/obj/effect/decal/rune/tearreality, cost = 50, tome_required = 1)
 
 /mob/proc/emp_imbue()
 	set category = "Cult Magic"
 	set name = "Imbue: EMP"
 
-	make_rune(/obj/effect/rune/imbue/emp)
+	make_rune(/obj/effect/decal/rune/imbue/emp)
 
 /mob/proc/cult_communicate()
 	set category = "Cult Magic"

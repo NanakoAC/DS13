@@ -13,7 +13,7 @@
 	name = "Psychic Tracer"
 	id = "psychic_tracer"
 	desc = "Plants a psychic tracer on a target mob, causing them to act as a visual relay for necrovision. This allows signals to see in a radius around them. <br>\
-	This can last up to 10 minutes, but it will expire faster the more human crewmembers are near the target. Visual radius will gradually dwindle as the duration runs out.<br>\
+	This lasts 5 minutes as a baseline, but it wears off more slowly depending on the target's sanity (minus courage). As long as the target has over 300 insanity, this effect is permanant<br>\
 	<br>\
 	Casting it again on a target who already has a tracer will refresh the duration and range"
 	target_string = "any living mob or crewmember"
@@ -24,6 +24,8 @@
 	target_types = list(/mob/living)
 
 	targeting_method	=	TARGET_CLICK
+
+
 
 
 /datum/signal_ability/psychic_tracer/on_cast(var/mob/user, var/atom/target, var/list/data)
@@ -61,9 +63,10 @@
 	flags = EXTENSION_FLAG_IMMEDIATE
 	base_type = /datum/extension/psychic_tracer
 
-	var/atom/A
+	var/mob/living/carbon/human/H
+	var/mob/living/L
 	var/tick_interval_seconds = 4	//This serves a dual purpose
-	var/initial_duration = 10 MINUTES
+	var/initial_duration = 5 MINUTES
 	var/initial_radius = TRACER_MAX_RANGE
 	var/radius
 
@@ -73,12 +76,17 @@
 	//Crew
 	var/crew_multiplier = 0.5	//50% faster for each visible crewmember
 
+	var/permanant_threshold = 300
 
 
 
 /datum/extension/psychic_tracer/New(var/datum/holder)
 	.=..()
-	A = holder
+	L = holder
+	if (ishuman(holder))
+		H = holder
+		//Deals a bit of sanity damage on application, but not on refreshing
+		H.add_active_insanity(/datum/sanity_source/gaze, SANITY_DAMAGE_ACTIVE_MID)
 	duration = initial_duration
 	addtimer(CALLBACK(src, /datum/extension/psychic_tracer/proc/tick), tick_interval_seconds SECONDS)
 	object = new /obj/effect/psychic_tracer(holder)
@@ -88,9 +96,20 @@
 
 
 /datum/extension/psychic_tracer/proc/tick()
-	var/numcrew = get_visible_crew()
+	if (QDELETED(L) || L.stat == DEAD)
+		stop()
+		return
 
-	change_duration((tick_interval_seconds SECONDS) * (1 + (numcrew * crew_multiplier))*-1)
+	var/subtract_multiplier
+	var/insanity = L.get_insanity(TRUE)
+	if (insanity >= permanant_threshold)
+		subtract_multiplier = 1
+	else if (!insanity || insanity < 0)
+		subtract_multiplier = 0
+	else
+		subtract_multiplier = insanity / permanant_threshold
+
+	change_duration((tick_interval_seconds SECONDS) * (1 - subtract_multiplier))
 	if (duration > 0)
 		addtimer(CALLBACK(src, /datum/extension/psychic_tracer/proc/tick), tick_interval_seconds SECONDS)
 
@@ -126,7 +145,7 @@
 	GLOB.necrovision.add_source(object, TRUE, TRUE)
 
 /datum/extension/psychic_tracer/get_visualnet_tiles(var/datum/visualnet/network)
-	return A.turfs_in_view(radius)
+	return L.turfs_in_view(radius)
 
 
 /datum/extension/psychic_tracer/proc/stop()
@@ -138,21 +157,5 @@
 	.=..()
 
 
-//Find out how many crew can see our source
-/datum/extension/psychic_tracer/proc/get_visible_crew()
-	var/num = 0
-	for (var/mob/living/carbon/human/H in view(10, A))
-		if (H.stat == DEAD)
-			continue
-
-		if (H.is_necromorph())
-			continue
-
-		if (H == A)
-			continue
-
-		num++
-
-	return num
 
 #undef TRACER_MAX_RANGE

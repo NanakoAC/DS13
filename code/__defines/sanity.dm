@@ -19,20 +19,32 @@
 //Of course there are other risks to turning your back on horrible things
 #define SANITY_VISIBLE_LOOKAWAY_MULT	0.6
 
+
+
+
+
+
 //Baseline values on sanity damage
 #define SANITY_DAMAGE_SCREAM	5
 #define SANITY_DAMAGE_DISMEMBER	75	//Watching others get dismembered
 #define SANITY_DAMAGE_SELF_DISMEMBER	200	//Losing your own limb is crazy terrifying
 #define SANITY_DAMAGE_DEATH	50	//Death itself is fairly damaging, but its usually accompanied by dismemberment and gore that add more insanity ontop of this
 #define SANITY_DAMAGE_MALFUNCTION	3.5	//Light flickering
+#define SANITY_DAMAGE_GAZE	50	//Being spotted by an eye node
 
+
+//Generic active sanity damage values
+#define SANITY_DAMAGE_ACTIVE_LOW	5
+#define SANITY_DAMAGE_ACTIVE_MID	20
+#define SANITY_DAMAGE_ACTIVE_HIGH	50
 
 //Passive Sanity Damage: These use standardised values, it all blends together
 //All passive sanity damage values are per-second
 #define SANITY_DAMAGE_PASSIVE_LOW	0.03	//Bloodstains
 #define SANITY_DAMAGE_PASSIVE_MID	0.1		//Corpses
 #define SANITY_DAMAGE_PASSIVE_HIGH	0.4
-#define SANITY_DAMAGE_PASSIVE_EXTREME	1	//Marker and shards
+#define SANITY_DAMAGE_PASSIVE_EXTREME	1	//Marker and shards, inactive
+#define SANITY_DAMAGE_PASSIVE_MARKER	5	//Marker and shards, active
 
 //Passive sanity damage from mobs. They only inflict this damage aura while alive, killing them stops it.
 //So to counterbalance that risk, they are far more powerful than immobile sources
@@ -40,19 +52,38 @@
 #define SANITY_DAMAGE_PASSIVE_MOB_MID	3
 #define SANITY_DAMAGE_PASSIVE_MOB_HIGH	6
 
+
+
+
+
+
+
+
 //Caps on sanity damage
 //Cap on sanity damage from active shouts from necromorphs
-#define SANITY_CAP_SHOUT	300
+#define SANITY_CAP_SHOUT	350
 #define SANITY_CAP_DISMEMBER	800	//Brutal violence has high limits
-#define SANITY_CAP_MALFUNCTION	200	//Malfunctioning machines are only mildly spooky
-
+#define SANITY_CAP_MALFUNCTION	250	//Malfunctioning machines are only mildly spooky
+#define SANITY_CAP_GRAFFITI	150	//Nothing supernatural about graffiti, fairly low
 /*
 	Sanity caps for passive things
 */
 #define SANITY_CAP_BLOOD	300
+#define SANITY_CAP_MARKER_INACTIVE	200	//Hanging around near an inert marker makes you a bit uneasy
 
 //Used for creating singleton dummy versions of sanity effects to hold in a global list, for validity checks
 #define REFERENCE	"reference"
+
+
+
+
+
+
+
+
+
+
+
 
 
 /*
@@ -66,6 +97,9 @@
 #define DESEN_ACTIVE_HIGH	0.75
 #define DESEN_ACTIVE_MED	0.85
 #define DESEN_ACTIVE_LOW	0.95
+
+//An event that you cannot become used to
+#define DESEN_NONE	1
 
 //Passive effects tick each second so they have MUCH lower desensitisation rates
 #define DESEN_PASSIVE_HIGH	0.99
@@ -92,7 +126,8 @@
 #define TAG_MALFUNCTION "malfunction"	//Flickering/exploding lights, doors locking themselves. Machinery behaving strangely in general
 #define TAG_BLOOD	"blood"	//Bloodstains on floor, walls, and people
 #define TAG_MONSTER	"monster"	//Live necromorphs, scary illusions. Generally witnessing horrible creatures face to face
-
+#define TAG_ALIEN	"alien"	//Marker, shards and other alien artefacts
+#define TAG_GRAFFITI	"graffiti"	//Runes and writing
 /*
 	Cooldowns:
 	Hard minimums after checks or effects, before another sanity check can occur.

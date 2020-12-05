@@ -21,6 +21,7 @@ var/global/list/image/splatter_cache=list()
 	var/amount = 5
 	var/drytime
 	biomass = 0.2
+	passive_sanity_type = /datum/sanity_source/blood
 
 /obj/effect/decal/cleanable/blood/reveal_blood()
 	if(!fluorescent)
@@ -57,7 +58,7 @@ var/global/list/image/splatter_cache=list()
 					qdel(B)
 	drytime = world.time + DRYING_TIME * (amount+1)
 	START_PROCESSING(SSobj, src)
-	SSsanity.register_passive_sanity_source(src, /datum/sanity_source/blood)
+
 
 /obj/effect/decal/cleanable/blood/Process()
 	if(world.time > drytime)
@@ -165,6 +166,7 @@ var/global/list/image/splatter_cache=list()
 	var/message
 	biomass = 0
 	appearance_flags = PIXEL_SCALE
+	passive_sanity_type = /datum/sanity_source/graffiti
 
 /obj/effect/decal/cleanable/blood/writing/New()
 	..()

@@ -45,10 +45,12 @@
 			if (delta > minimum_notify_delay)
 				to_chat(H, SPAN_NOTICE("A shiver runs down your spine. You are being watched."))
 				H.playsound_local(get_turf(H), get_sfx("hiss"), 50)
+				//The victim suffers sanity damage
+				H.add_active_insanity(/datum/sanity_source/gaze, origin_atom = src)
 
 /obj/structure/corruption_node/eye/get_blurb()
 	. = "This node is effectively an organic camera. It massively increases the view range of the necrovision network by [visualnet_range] tiles.<br><br>\
-	 In addition, it will notify all necromorph players when it sees a live human. <br><br>\
+	 In addition, it will notify all necromorph players when it sees a live human, while inflicting a hefty chunk of sanity damage to that human. <br><br>\
 	Finally, and most significantly, all eye nodes will keep track of every human they see, storing that information centrally in the Prey Sightings menu. This can be used by all necromorphs to direct and coordinate their hunting efforts."
 
 

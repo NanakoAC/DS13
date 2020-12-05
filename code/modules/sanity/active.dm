@@ -67,8 +67,10 @@
 	sanity_check(sanity_damage)
 
 
+
+
 /*
-	Applies insanity to humans who can see this atom's turf
+	Applies a one off pulse of insanity to humans who can see this atom's turf
 
 	Vars:
 		Sourcetype: A typepath which must be a subtype of /datum/sanity_source. this will be used to fetch a datum from a global ref list

@@ -21,11 +21,11 @@
 		runerandom()
 	var/list/runes = list("Teleport", "Teleport Other", "Spawn a Tome", "Change Construct Type", "Convert", "EMP", "Drain Blood", "See Invisible", "Resurrect", "Hide Runes", "Reveal Runes", "Astral Journey", "Manifest a Ghost", "Imbue Talisman", "Sacrifice", "Wall", "Free Cultist", "Summon Cultist", "Deafen", "Blind", "BloodBoil", "Communicate", "Stun")
 	var/r = input(user, "Choose a rune to scribe", "Rune Scribing") in runes //not cancellable.
-	if(locate(/obj/effect/rune) in user.loc)
+	if(locate(/obj/effect/decal/rune) in user.loc)
 		to_chat(user, "<span class='warning'>There is already a rune in this location.</span>")
 		return
 
-	var/obj/effect/rune/R = new /obj/effect/rune(user.loc)
+	var/obj/effect/decal/rune/R = new /obj/effect/decal/rune(user.loc)
 	if(istype(user.loc,/turf))
 		var/area/A = get_area(user)
 		log_and_message_admins("created \an [r] rune at \the [A.name] - [user.loc.x]-[user.loc.y]-[user.loc.z].", user)
