@@ -109,7 +109,7 @@
 	else
 		subtract_multiplier = insanity / permanant_threshold
 
-	change_duration((tick_interval_seconds SECONDS) * (1 - subtract_multiplier))
+	change_duration(-((tick_interval_seconds SECONDS) * (1 - subtract_multiplier)))
 	if (duration > 0)
 		addtimer(CALLBACK(src, /datum/extension/psychic_tracer/proc/tick), tick_interval_seconds SECONDS)
 

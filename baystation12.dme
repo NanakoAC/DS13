@@ -2673,6 +2673,7 @@
 #include "code\modules\sanity\beacon.dm"
 #include "code\modules\sanity\check.dm"
 #include "code\modules\sanity\effect.dm"
+#include "code\modules\sanity\helpers.dm"
 #include "code\modules\sanity\mind.dm"
 #include "code\modules\sanity\mob.dm"
 #include "code\modules\sanity\passive.dm"

@@ -42,7 +42,7 @@
 	QDEL_IN(src, lifespan)
 
 	//Scrying deals minor sanity damage
-	visible_sanity_damage(/datum/sanity_source/gaze, SANITY_DAMAGE_ACTIVE_LOW, src)
+	visible_sanity_damage(/datum/sanity_source/gaze, SANITY_DAMAGE_ACTIVE_LOW, origin_atom = src)
 
 //Prevent it getting blown up
 /obj/effect/scry_eye/ex_act()

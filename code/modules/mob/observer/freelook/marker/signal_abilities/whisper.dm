@@ -55,6 +55,7 @@ GLOBAL_LIST_INIT(whispered, list())
 	to_chat(target, "<span class='necromorph'>[message]</span>")
 	message_necromorphs("[user] -> [target] <span class='necromorph'>[message]</span>", TRUE, list(target))
 
+	target.active_sanity_damage(/datum/sanity_source/voices)
 
 	//If this is the first time this round that this person has been whispered, link them to the codex
 	if (!(target in GLOB.whispered))

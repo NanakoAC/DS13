@@ -35,6 +35,10 @@
 	var/falloff	=	SANITY_PASSIVE_STACK_FALLOFF_LOW
 
 
+//Returns a random description
+/datum/sanity_source/proc/get_description()
+	return pick(descriptions)
+
 /*
 	Some common ones
 */
@@ -143,9 +147,37 @@
 	sanity_tags = list(TAG_MALFUNCTION)
 	sanity_damage = SANITY_DAMAGE_GAZE
 
-	sanity_limit = SANITY_CAP_MALFUNCTION
+	sanity_limit = SANITY_CAP_GAZE
 
 	desensitisation = DESEN_ACTIVE_LOW
+
+
+/*
+	Recieving whispers from signals.
+	This has no cap, but relatively minor damage
+*/
+/datum/sanity_source/voices
+	name = "voices"
+	descriptions = list("They keep whispering",
+	"Voices all around me, but nobody else hears them",
+	"The voices tell me to do wicked things",
+	"Shut up shut up shut up shut up",
+	"Why won't the voices stop?")
+
+	sanity_tags = list(TAG_WHISPER)
+	sanity_damage = SANITY_DAMAGE_WHISPER
+
+
+	desensitisation = DESEN_ACTIVE_MID
+
+
+
+
+
+
+
+
+
 
 
 
@@ -283,7 +315,5 @@
 	gibbing
 	psychic pulses
 	corruption nodes
-	gaze
-	whispers
 	Marker Shards
 */

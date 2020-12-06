@@ -16,3 +16,12 @@
 
 	trigger = new(holder = epicentre, on_turf_entered = /datum/extension/sanity_scan/proc/register_victim, on_turfs_changed = null, range = src.range, proc_owner = src)
 	trigger.register_turfs()
+
+	//We do an active scan once only on initial setup, because the prox trigger won't detect things which are already in range but not moving
+	do_active_scan()
+
+
+/datum/extension/sanity_scan/passive/Destroy()
+	if (trigger)
+		QDEL_NULL(trigger)
+	.=..()

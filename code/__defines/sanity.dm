@@ -31,6 +31,7 @@
 #define SANITY_DAMAGE_DEATH	50	//Death itself is fairly damaging, but its usually accompanied by dismemberment and gore that add more insanity ontop of this
 #define SANITY_DAMAGE_MALFUNCTION	3.5	//Light flickering
 #define SANITY_DAMAGE_GAZE	50	//Being spotted by an eye node
+#define SANITY_DAMAGE_WHISPER	5	//Being spotted by an eye node
 
 
 //Generic active sanity damage values
@@ -64,6 +65,7 @@
 #define SANITY_CAP_SHOUT	350
 #define SANITY_CAP_DISMEMBER	800	//Brutal violence has high limits
 #define SANITY_CAP_MALFUNCTION	250	//Malfunctioning machines are only mildly spooky
+#define SANITY_CAP_GAZE	350
 #define SANITY_CAP_GRAFFITI	150	//Nothing supernatural about graffiti, fairly low
 /*
 	Sanity caps for passive things
@@ -149,7 +151,7 @@
 	Recovery
 	Sanity restored per second
 */
-#define SANITY_REGEN_BASE	0.8333	//5 points restored per minute
+#define SANITY_REGEN_BASE	0.08333	//5 points restored per minute
 
 
 /*
@@ -173,3 +175,11 @@
 #define SANITY_PASSIVE_STACK_FALLOFF_HIGH	0.8
 #define SANITY_PASSIVE_STACK_FALLOFF_MID	0.9
 #define SANITY_PASSIVE_STACK_FALLOFF_LOW	0.95
+
+
+
+#define PSYCH_DIAGNOSTIC_NONE	0
+#define PSYCH_DIAGNOSTIC_AMATEUR	1
+#define PSYCH_DIAGNOSTIC_PROFESSIONAL	2
+#define PSYCH_DIAGNOSTIC_EXPERT	3
+#define PSYCH_DIAGNOSTIC_MASTER	4

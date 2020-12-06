@@ -8,7 +8,7 @@
 */
 /obj/horror_beacon
 	var/area/registered_area
-	var/datum/extension/sanity_scan/passive/scan_extension
+
 	density = FALSE
 	opacity = FALSE
 
@@ -24,14 +24,13 @@
 		registered_area = A
 
 		//This extension will setup scanning and prox triggers
-		scan_extension = set_extension(src, /datum/extension/sanity_scan/passive)
+		set_extension(src, /datum/extension/sanity_scan/passive)
 	else
 		//If we somehow have no area, something has gone horribly wrong
 		return INITIALIZE_HINT_QDEL
 
 
 /obj/horror_beacon/Destroy()
-	scan_extension = null	//Parent destroy behaviour will remove and delete it, we just remove this reference so we dont interfere
 	.=..()
 	if (registered_area)
 		LAZYREMOVE(registered_area.horror_beacons, src)
@@ -41,4 +40,6 @@
 	Wrapper for registering a source on the scan extension
 */
 /obj/horror_beacon/proc/register(var/atom/thing, var/datum/sanity_source/source)
-	scan_extension.add_source(thing, source)
+	var/datum/extension/sanity_scan/passive/scan_extension = get_extension(src, /datum/extension/sanity_scan/passive)
+	if (scan_extension)
+		scan_extension.add_source(thing, source)
