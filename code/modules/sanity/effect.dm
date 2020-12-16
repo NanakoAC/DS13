@@ -44,7 +44,7 @@
 
 
 	required_insanity:
-	The hard minimum insanity (calculated after subtracting courage) that is required to qualify for this effect.
+	The hard minimum insanity (calculated after subtracting resolve) that is required to qualify for this effect.
 	If you have less than this, it is not valid
 */
 

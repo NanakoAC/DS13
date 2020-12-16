@@ -3,6 +3,7 @@
 	These use hard capping
 */
 /mob/living/carbon/human/proc/add_passive_insanity(var/datum/sanity_source/source, var/sanity_damage, var/sanity_limit, var/origin_atom)
+	world << "ADD PASSIVE INSANITY [source]"
 	var/datum/mind/M = get_mind()
 	if (!M)
 		return FALSE
@@ -39,18 +40,27 @@
 	Use only for things which won't move much, and which come in large quantities, like bloodstains
 */
 /atom/proc/register_passive_sanity_source(var/sourcetype)
+	world << "Passive sanity registered [sourcetype] | [src]"
 	SSsanity.register_passive_sanity_source(src, sourcetype)
+
+
+
 
 
 /*
 	This is used for specific things which are scary, and relatively unique. there will only be one or few of them,
 	In this case the object does not use horror beacons, and it is itself the epicentre.
 
-	Use only for things which won't move much, and which come in simular or very small quantities, like the marker, and harvester nodes
+	Use only for things which won't move much, and which come in singular or very small quantities, like the marker, and harvester nodes
 */
 /atom/proc/register_standalone_passive_sanity_source(var/sourcetype)
 	var/datum/extension/sanity_scan/passive/scan_extension = set_extension(src, /datum/extension/sanity_scan/passive)
 	scan_extension.add_source(src, sourcetype)
+
+
+
+
+
 
 /*
 	This registers a sanity source which is highly mobile. It has multilayered scanning systems to minimise performance cost

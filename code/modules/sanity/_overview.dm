@@ -58,12 +58,12 @@
 	provide the best environment for recovery
 
 
-	Courage:
+	Resolve:
 	---------
-	Courage is your resistance to insanity. For the purposes of calculating sanity effects, your effective insanity is
-	insanity minus courage. If you have 100 courage then you'll experience no ill effects at all until insanity hits 101
+	Resolve is your resistance to insanity. For the purposes of calculating sanity effects, your effective insanity is
+	insanity minus resolve. If you have 100 resolve then you'll experience no ill effects at all until insanity hits 101
 
-	Sources of courage are generally vices, and typically temporary. Take a swig of whisky before charging into horrible places
+	Sources of resolve are generally vices, and typically temporary. Take a swig of whisky before charging into horrible places
 
 
 	Adrenaline:

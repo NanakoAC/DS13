@@ -1,7 +1,12 @@
-/mob/proc/get_insanity(var/include_courage, var/include_reserve)
+/mob/proc/get_insanity(var/include_resolve, var/include_reserve)
 	return 0
 
-/mob/living/carbon/human/get_insanity(var/include_courage, var/include_reserve)
+
+/*
+	Gets the mob's insanity value, optionally factoring in resolve and reserve
+
+*/
+/mob/living/carbon/human/get_insanity(var/include_resolve, var/include_reserve)
 	var/datum/mind/M = get_mind()
 	if (!M)
 		return 0
@@ -20,15 +25,18 @@
 				. = 0
 				break
 
-	//Next subtract courage, this CAN go negative
-	if (include_courage)
-		. -= get_courage()
+	//Next subtract resolve, this CAN go negative
+	if (include_resolve)
+		. -= get_resolve()
 
-/mob/living/carbon/human/proc/get_courage()
+
+/mob/proc/get_resolve()
+
+/mob/living/carbon/human/get_resolve()
 	var/datum/mind/M = get_mind()
 	if (!M)
 		return FALSE
-	return M.courage
+	return M.resolve
 
 
 

@@ -35,7 +35,7 @@
 	1% chance per 10 points, ish
 
 	However, we don't use insanity as is, we use a modified value of it. Equal to
-	Insanity - Reserved Insanity - Courage
+	Insanity - Reserved Insanity - Resolve
 
 	Some insanity is reserved by existing applied effects, so generally the more effects you already have,
 	the lower the odds that new ones will be added
@@ -47,7 +47,7 @@
 	This is an assoc list in the format list(effect_datum = minimum_insanity)
 	This is sorted by the minimum insanity in ascending order
 
-	To figure out which ones we meet the minimum for, we use a value equal to insanity - courage.
+	To figure out which ones we meet the minimum for, we use a value equal to insanity - resolve.
 	Reserved insanity is NOT factored into this calculation, intentionally.
 
 	Then we chop off the bottom of the list, excluding all those which have a minimum value higher than what we just calculated.
@@ -69,7 +69,7 @@
 		return
 
 	//Alright, now lets get the sanity we use for probability calculations
-	var/prob_sanity = get_insanity(TRUE, TRUE) * SANITY_PROBABILITY_FACTOR	//True to calculate both courage and reserve
+	var/prob_sanity = get_insanity(TRUE, TRUE) * SANITY_PROBABILITY_FACTOR	//True to calculate both resolve and reserve
 
 	prob_sanity += SANITY_PROBABILITY_BASE
 	prob_sanity += extra_prob
@@ -80,7 +80,7 @@
 
 
 	//Alright, we are going to add an effect.Now lets get our threshold
-	var/sanity_threshold = get_insanity(TRUE, FALSE)	//This value does NOT count reserve, but does count courage
+	var/sanity_threshold = get_insanity(TRUE, FALSE)	//This value does NOT count reserve, but does count resolve
 
 
 	//And lets get the list of all the possible effects

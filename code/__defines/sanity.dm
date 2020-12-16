@@ -100,6 +100,9 @@
 #define DESEN_ACTIVE_MED	0.85
 #define DESEN_ACTIVE_LOW	0.95
 
+//Alternate spelling
+#define DESEN_ACTIVE_MID	DESEN_ACTIVE_MED
+
 //An event that you cannot become used to
 #define DESEN_NONE	1
 
@@ -107,6 +110,9 @@
 #define DESEN_PASSIVE_HIGH	0.99
 #define DESEN_PASSIVE_MED	0.995
 #define DESEN_PASSIVE_LOW	0.999
+
+//Alternate spelling
+#define DESEN_PASSIVE_MID	DESEN_PASSIVE_MED
 
 
 
@@ -130,6 +136,8 @@
 #define TAG_MONSTER	"monster"	//Live necromorphs, scary illusions. Generally witnessing horrible creatures face to face
 #define TAG_ALIEN	"alien"	//Marker, shards and other alien artefacts
 #define TAG_GRAFFITI	"graffiti"	//Runes and writing
+#define TAG_WHISPER	"whisper"
+
 /*
 	Cooldowns:
 	Hard minimums after checks or effects, before another sanity check can occur.

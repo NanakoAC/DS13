@@ -13,7 +13,7 @@
 	name = "Psychic Tracer"
 	id = "psychic_tracer"
 	desc = "Plants a psychic tracer on a target mob, causing them to act as a visual relay for necrovision. This allows signals to see in a radius around them. <br>\
-	This lasts 5 minutes as a baseline, but it wears off more slowly depending on the target's sanity (minus courage). As long as the target has over 300 insanity, this effect is permanant<br>\
+	This lasts 5 minutes as a baseline, but it wears off more slowly depending on the target's sanity (minus resolve). As long as the target has over 300 insanity, this effect is permanant<br>\
 	<br>\
 	Casting it again on a target who already has a tracer will refresh the duration and range"
 	target_string = "any living mob or crewmember"

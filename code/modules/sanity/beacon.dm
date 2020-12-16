@@ -40,6 +40,6 @@
 	Wrapper for registering a source on the scan extension
 */
 /obj/horror_beacon/proc/register(var/atom/thing, var/datum/sanity_source/source)
-	var/datum/extension/sanity_scan/passive/scan_extension = get_extension(src, /datum/extension/sanity_scan/passive)
+	var/datum/extension/sanity_scan/passive/scan_extension = get_extension(src, /datum/extension/sanity_scan)
 	if (scan_extension)
 		scan_extension.add_source(thing, source)
