@@ -407,6 +407,30 @@ SUBSYSTEM_DEF(timer)
 		return TRUE
 	return FALSE
 
+/*
+	Checks if the specified timer id is still waiting to fire.
+	Returns true if its confirmed to exist and not have fired yet
+
+	false in any other circumstance
+*/
+/proc/checktimer(id)
+	if (!id)
+		return FALSE
+	if (id == TIMER_ID_NULL)
+		return FALSE
+
+	var/datum/timedevent/timer
+	if (!istext(id))
+		if (istype(id, /datum/timedevent))
+			timer = id
+
+	if (!timer)
+		timer = SStimer.timer_id_dict["timerid[id]"]
+
+	if (timer && !timer.spent)
+		return TRUE
+	return FALSE
+
 
 #undef BUCKET_LEN
 #undef BUCKET_POS

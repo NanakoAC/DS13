@@ -217,3 +217,29 @@
 	small_icon = TRUE
 
 
+
+/obj/screen/fullscreen/eyeclose
+	layer = FULLSCREEN_LAYER
+	icon = 'icons/mob/screen_full.dmi'
+	icon_state = "eye_close"
+
+/obj/screen/fullscreen/eyeclose/slow
+	icon_state = "eye_close_slow"
+
+
+
+/obj/screen/fullscreen/eyeclose/fast
+	icon_state = "eye_close_fast"
+
+
+/obj/screen/fullscreen/eyeclose/open
+	icon_state = "eye_open"
+
+//A blackout which draws over the hud
+/obj/screen/fullscreen/total_blackout
+	icon = 'icons/mob/screen1.dmi'
+	icon_state = "blackout"
+	screen_loc = "WEST,SOUTH to EAST,NORTH"
+	layer = DAMAGE_LAYER
+	plane = ABOVE_HUD_PLANE
+	small_icon = TRUE

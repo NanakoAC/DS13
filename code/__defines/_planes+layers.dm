@@ -215,6 +215,8 @@ What is the naming convention for planes or layers?
 	#define HUD_TEXT_LAYER 4
 
 
+#define ABOVE_HUD_PLANE                6 // for fullscreen overlays that DO cover the hud.
+
 //This is difference between highest and lowest visible
 #define PLANE_DIFFERENCE              22
 /image

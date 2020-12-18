@@ -17,3 +17,16 @@
 
 
 #define REFERENCE	"reference"
+
+
+/*
+	Status flags for sanity effects
+*/
+#define STATUS_DORMANT	1	//Applied but not currently active
+#define STATUS_ACTIVE	2	//Currently active and doing stuff
+#define STATUS_FADING	3
+/* A fading effect is still applied, but not for long. It can never trigger again, can't be treated, and will be removed on its own
+	after some time. The purpose of fading effects is just to hang onto some reserved insanity for a few minutes.
+
+	They will only show in the mind menu for really high psych skill
+ */

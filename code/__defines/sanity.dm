@@ -15,6 +15,13 @@
 //Baseline probability of getting a sanity effect at each check, in addition to calculations
 #define SANITY_PROBABILITY_BASE	3
 
+/*
+	Higher tier effects are more likely to be picked when we meet their requirement.
+	The weight of each effect is equal to its minimum insanity multiplied by this value
+	Plus one
+*/
+#define SANITY_MINIMUM_PROBABILITY_WEIGHT	0.015
+
 //If you see something spooky but aren't directly facing it, the incoming sanity damage is multiplied by this
 //Of course there are other risks to turning your back on horrible things
 #define SANITY_VISIBLE_LOOKAWAY_MULT	0.6

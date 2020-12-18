@@ -14,7 +14,8 @@
 	if (statmods && auto_register_statmods)
 		register_statmods()
 
-
+/datum/extension/proc/remove_self()
+	remove_extension(holder, base_type)
 
 /datum/extension/Destroy()
 	if (statmods)

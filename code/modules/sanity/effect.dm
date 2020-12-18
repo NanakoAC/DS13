@@ -59,12 +59,22 @@
 	var/reserve = SANITY_RESERVE_MINOR
 
 	var/reference = FALSE	//If true, this doesnt have a holder and exists in a list for checking
-	var/currently_active = FALSE	//Is this currently applied to a mob and doing things?
+
+	//TODO: Unimplemented
+	var/status = STATUS_DORMANT	//Must be one of STATUS_DORMANT, STATUS_ACTIVE, STATUS_FADING
 
 	var/instant = FALSE		//Will apply and trigger in the same frame
 
 	var/max_duration = 20 MINUTES
+
+	//TODO: Unimplemented
 	var/min_duration = null
+
+	//If set, this effect will go into fading status when duration runs out.
+	//While fading it is mostly invisible and can't trigger, but will still hang onto reserved insanity
+	//After the fade duration it will finally unapply
+	//TODO: Unimplemented
+	var/fade_duration = null
 
 	//Applying Variables
 
@@ -86,8 +96,56 @@
 	var/has_mob_effects = TRUE
 
 
+
+
+
+	/*
+		Auto messages
+
+		These are all lists of strings. random things are picked from them and shown to users at the appropriate events
+
+		nothing happens for each event if the appropriate list is left null
+	*/
+
+	//Shown once when first applied
+	//TODO: Not implemented
+	var/list/messages_apply
+
+	//Shown each time the effect triggers
+	//TODO: Not implemented
+	var/list/messages_trigger_start
+
+	//Shown when the effect finishes triggering, and changes to any non active state
+	//TODO: Not implemented
+	var/list/messages_trigger_end
+
+	//Shown once when the effect ends, either by immediately unapplying, or by switching to fading state
+	//Note, nothing is shown when fading ends and its unapplied at that point
+	//TODO: Not implemented
+	var/list/messages_end
+
+	//Shown each time the message is prevented from triggering, via medication, restraints, etc.
+	//TODO: Not implemented
+	var/list/messages_prevented = list("You feel strange for a moment, but it passes without incident.",
+	"You feel uncomfortable, but hold it together",
+	"You feel like you just dodged a bullet",
+	"The seconds tick by, uneventfully",
+	"You twitch in anticipation, but nothing happens.",
+	"A still moment passes by",
+	"You feel a brief restlessness, vanishing as quickly as it comes.",
+	"The stillness within grounds you",
+	"You feel muted, neutral.")
+
+	//These are shown periodically while the effect is in a dormant state
+	//TODO: Not implemented
+	var/list/messages_periodic_dormant
+
+	//These are shown periodically while the effect is in an active state
+	//TODO: Not implemented
+	var/list/messages_periodic_active
+
 /datum/extension/sanity_effect/New(var/datum/holder)
-	//Pass this special parameter in to tell the sanity effect that its not getting a holder amd should not initialize
+	//Pass this special parameter in to tell the sanity effect that its not getting a holder and should not initialize
 	if (holder == REFERENCE)
 		reference = TRUE
 		return

@@ -221,7 +221,12 @@
 			possible = GLOB.all_sanity_effects.Copy(first_affordable)
 
 
-	//Possible todo: Farther modifications here
+	//Secondly, we must edit their weights a bit
+	//The weight of each effect is equal to 1 + (0.01* minimum insanity)
+	for (var/effect in possible)
+		var/min = possible[effect]
+		min *= SANITY_MINIMUM_PROBABILITY_WEIGHT
+		possible[effect] = min+1
 
 	return possible
 
