@@ -632,3 +632,67 @@ proc
 
 
 	return best_turf
+
+
+/*
+	This proc attempts to find turfs that we can both see, and reach by walking in an unobstructed line
+
+	The origin atom can be anything, but should ideally be the mob which is doing the walking
+	By default this will return a list of all valid turfs
+
+	if min_range is set, we will try to only return turfs which are at least min_range away, but if none apply then it behaves as normal
+
+	if one_only is set true, it will return only the first valid turf we find
+*/
+
+#define turf_reachable_from(x, y)	check_trajectory(x, y, y.pass_flags)
+
+/proc/reachable_points_in_view(var/atom/origin, var/range = 7, var/min_range = FALSE, var/one_only = FALSE)
+	var/list/candidates = origin.turfs_in_view(range)
+
+	var/turf/origin_turf = get_turf(origin)
+	candidates -= origin_turf
+
+	var/list/secondary_candidates = list()
+
+	//If we're only taking one, shuffle this to make it unpredictable
+	if (one_only)
+		candidates = shuffle(candidates)
+
+	for (var/turf/T as anything in candidates)
+		//If its too close, we put it in the backup list
+		if (min_range && get_dist(origin_turf, T) < min_range)
+			secondary_candidates += T
+			candidates -= T
+			continue
+
+		if (!(turf_reachable_from(T, origin)))
+			candidates -= T
+			continue
+
+		//Alright its reachable!
+		if (one_only)
+			return T
+
+		//If not one only, then we just leave it in the list
+
+
+	//Alright, round 1 done.
+	if (candidates.len)
+		return candidates
+
+
+	else
+		//Welp, everything was under minimum range, we'll have to make do
+		for (var/turf/T as anything in secondary_candidates)
+
+			if (!(turf_reachable_from(T, origin)))
+				secondary_candidates -= T
+				continue
+
+			//Alright its reachable!
+			if (one_only)
+				return T
+
+
+	return secondary_candidates

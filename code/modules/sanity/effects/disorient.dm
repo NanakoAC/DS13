@@ -8,17 +8,43 @@
 
 	They will likely be pretty confused and take a few seconds to realise where they are
 */
+#define EYECLOSE_DURATION	3 SECONDS
 /datum/extension/sanity_effect/disorient
-	max_duration = 3 SECONDS
+	instant = TRUE
+	has_client_effects = TRUE
+	trigger_duration_max = (EYECLOSE_DURATION)
+	trigger_windup_time = EYECLOSE_TIME_SLOW + 1
 
-/datum/extension/sanity_effect/disorient/apply_client_effects()
-
+/datum/extension/sanity_effect/disorient/trigger_windup()
+	world << "Disorient trigger windup effects [subject]"
 	//Close their eyes
-	subject.close_eyes_for(max_duration, TRUE, EYECLOSE_TIME_SLOW)
-	spawn(EYECLOSE_TIME_SLOW+1)
-		//Wait for that to be done
-		if (subject)
-			var/client/C = subject.get_client()
-			if (C)
-				//Set client direction to any direction other than its current one
-				C.dir = pick(GLOB.cardinal - C.dir)
+	subject.close_eyes_for(EYECLOSE_DURATION, TRUE, EYECLOSE_TIME_SLOW)
+
+
+/datum/extension/sanity_effect/disorient/trigger_client_effects()
+	world << "Disorient trigger client effects"
+	var/client/C = subject.get_client()
+	if (C)
+		//Set client direction to any direction other than its current one
+		C.dir = pick(GLOB.cardinal - C.dir)
+
+
+
+
+/datum/extension/sanity_effect/disorient/trigger_mob_effects()
+	world << "Disorient trigger mob effects"
+	/*
+		We are going to move to a random spot we can see
+	*/
+	var/turf/target = reachable_points_in_view(origin = subject, range = 15, min_range = 6, one_only = TRUE)
+
+	if (target)
+		var/delay = subject.movement_delay()
+		delay *= 0.6 //Move a bit faster
+		walk_to(subject, target, 0, delay)
+
+
+/datum/extension/sanity_effect/disorient/on_end_trigger()
+	world << "Disorient trigger end"
+	//Cancel any walking
+	walk(subject, 0)

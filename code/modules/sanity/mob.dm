@@ -16,9 +16,6 @@
 	if (include_reserve)
 		//TODO: Have a sublist for sanity effects
 		for (var/datum/extension/sanity_effect/S in extensions)
-			if (!S.currently_active)
-				continue
-
 			. -= S.reserve
 			//If we drop to zero don't bother to continue counting
 			if (. <= 0)

@@ -53,6 +53,12 @@
 	base_type = /datum/extension/sanity_effect //Used for startup filtering
 	flags = EXTENSION_FLAG_IMMEDIATE
 
+
+
+//Data
+//----------------------
+	var/clinical_name	//Optional, used when viewed by advanced psychiatrists.
+
 	var/mob/living/carbon/human/subject
 
 	var/required_insanity = SANITY_TIER_MINOR
@@ -60,30 +66,50 @@
 
 	var/reference = FALSE	//If true, this doesnt have a holder and exists in a list for checking
 
-	//TODO: Unimplemented
 	var/status = STATUS_DORMANT	//Must be one of STATUS_DORMANT, STATUS_ACTIVE, STATUS_FADING
 
 	var/instant = FALSE		//Will apply and trigger in the same frame
 
-	var/max_duration = 20 MINUTES
 
-	//TODO: Unimplemented
-	var/min_duration = null
-
-	//If set, this effect will go into fading status when duration runs out.
-	//While fading it is mostly invisible and can't trigger, but will still hang onto reserved insanity
-	//After the fade duration it will finally unapply
-	//TODO: Unimplemented
-	var/fade_duration = null
-
-	//Applying Variables
-
+//Applying Variables
+//---------------------------
 	//If this has been applied to this mob at least once already in this round, we return this instead of ideal.
 	//Recommended values:
 		//CHECK_NOT_IDEAL: Will not apply a second time unless nothing else is ideal, so the user will almost never see it twice in a round
 		//CHECK_NEVER: Once only per round, never allow a second time
 		//CHECK_IDEAL:	Can repeat endlessly, no limiting. Useful for things that don't grate with repetition
 	var/previously_applied_behaviour = CHECK_NOT_IDEAL //TODO: Not implemented
+
+
+	//How long this effect remains applied, before being unapplied
+	//Note that even after this ends, if trigger is active, we will wait for that to finish before terminating
+	//Setting this to zero and setting instant to true, will create an effect that triggers once then removes as soon as its done triggering
+	var/apply_duration_max = 0
+
+	//If set, duration is randomised between min and max
+	var/apply_duration_min = null
+
+	//If true, this effect has reached the end of its duration and should now be either unapplied or faded
+	//This is only set when it can't end due to an ongoing trigger, so it will end as soon as it becomes inactive
+	var/ended = FALSE
+
+	//Just tracks a timer handle so it can be stopped manually in case of early termination
+	var/apply_timer_handle
+
+
+//Triggering Variables
+//---------------------
+	//How long trigger lasts. If zero, it will end immediately
+	var/trigger_duration_max = 0
+
+	//If set, duration is randomised between min and max
+	var/trigger_duration_min
+
+	//If set, this much time is allotted to windup stuff before the duration starts
+	var/trigger_windup_time
+
+	//Just tracks a timer handle so it can be stopped manually in case of early termination
+	var/trigger_timer_handle
 
 	//Triggering Variables
 	//TODO: Not implemented
@@ -96,9 +122,25 @@
 	var/has_mob_effects = TRUE
 
 
+//Fading Variables
+//---------------------
+	//If set, this effect will go into fading status when duration runs out.
+	//While fading it is mostly invisible and can't trigger, but will still hang onto reserved insanity
+	//After the fade duration it will finally unapply
+	//TODO: Unimplemented
+	var/fade_duration = null
+
+	//Applying Variables
 
 
 
+
+
+
+
+
+//String Variables
+//---------------------
 	/*
 		Auto messages
 
@@ -144,6 +186,9 @@
 	//TODO: Not implemented
 	var/list/messages_periodic_active
 
+
+
+
 /datum/extension/sanity_effect/New(var/datum/holder)
 	//Pass this special parameter in to tell the sanity effect that its not getting a holder and should not initialize
 	if (holder == REFERENCE)
@@ -152,15 +197,17 @@
 
 	..()
 
-
-
-
 	Initialize(arglist(args))
+
+
 
 
 //This isnt the same as atom initialize, it could have any mixture of input parameters, override it and set what's expected
 /datum/extension/sanity_effect/proc/Initialize()
 	.=..()
+	subject = holder
+
+	applied()
 
 	//Even though safety checks were done, we redo them anyways in the case of CHECK_PREVENTED
 	if (instant)
@@ -197,6 +244,41 @@
 
 
 /*
+	Called when we are applied
+*/
+/datum/extension/sanity_effect/proc/applied()
+	var/apply_duration = apply_duration_max
+	if (!isnull(apply_duration_min))
+		apply_duration = rand_between(apply_duration_min, apply_duration_max)
+
+	apply_timer_handle = addtimer(CALLBACK(src, /datum/extension/sanity_effect/proc/end_apply), apply_duration, TIMER_STOPPABLE)
+
+
+
+/*
+	Called when our overarching duration runs out, attempts to end.
+
+*/
+/datum/extension/sanity_effect/proc/end_apply()
+	/*
+		If triggering is still active, we can't end yet
+	*/
+	if (status == STATUS_ACTIVE)
+		//Set this flag so that this proc will be called again when trigger ends
+		ended = TRUE
+		return
+
+
+
+
+
+
+
+/*
+	Triggering
+*/
+
+/*
 	Once applied, can this effect start doing its thing?
 	In the case of instant effects, this is called at the same time as can_apply,
 	and has the same consequences as described above
@@ -218,10 +300,6 @@
 /datum/extension/sanity_effect/proc/can_trigger(var/mob/living/carbon/human/victim)
 	return CHECK_IDEAL
 
-
-/*
-	Triggering
-*/
 /datum/extension/sanity_effect/proc/attempt_trigger()
 	var/safety = can_trigger(holder)
 	if (safety == CHECK_NOT_IDEAL || safety == CHECK_IDEAL)
@@ -231,19 +309,57 @@
 //don't override this directly if possible, override the procs it calls instead.
 //Add more of them as needed
 /datum/extension/sanity_effect/proc/trigger()
+	status = STATUS_ACTIVE
+
+	trigger_windup()
+
+	if (trigger_windup_time)
+		sleep(trigger_windup_time)
+
 	if (has_client_effects)
 		//Apply client effects and setup a call to reapply them later
-		if (!GLOB.logged_in_event.is_listening(holder, src, /datum/extension/sanity_effect/proc/apply_client_effects))
-			GLOB.logged_in_event.register(holder, src, /datum/extension/sanity_effect/proc/apply_client_effects)
-		apply_client_effects()
+		if (!GLOB.logged_in_event.is_listening(holder, src, /datum/extension/sanity_effect/proc/trigger_client_effects))
+			GLOB.logged_in_event.register(holder, src, /datum/extension/sanity_effect/proc/trigger_client_effects)
+		trigger_client_effects()
 
 
 	if (has_mob_effects)
-		apply_mob_effects()
+		trigger_mob_effects()
+
+
+	var/trigger_duration = trigger_duration_max
+	if (!isnull(trigger_duration_min))
+		trigger_duration = rand_between(trigger_duration_min, trigger_duration_max)
+
+	trigger_timer_handle = addtimer(CALLBACK(src, /datum/extension/sanity_effect/proc/end_trigger), trigger_duration, TIMER_STOPPABLE)
 
 
 
-/datum/extension/sanity_effect/proc/apply_client_effects()
+
+/*
+	Called when triggering ends
+*/
+/datum/extension/sanity_effect/proc/end_trigger()
+	deltimer(trigger_timer_handle)
+
+	status = STATUS_DORMANT
+
+	on_end_trigger()
+
+	if (ended)
+		end_apply()
 
 
-/datum/extension/sanity_effect/proc/apply_mob_effects()
+/*
+	Overrideable procs
+	Override these instead of touching other things
+*/
+/datum/extension/sanity_effect/proc/trigger_windup()
+
+/datum/extension/sanity_effect/proc/on_end_trigger()
+
+
+/datum/extension/sanity_effect/proc/trigger_client_effects()
+
+
+/datum/extension/sanity_effect/proc/trigger_mob_effects()

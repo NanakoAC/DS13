@@ -206,19 +206,19 @@
 	Does not do any additional validity or checking on them, that comes later
 */
 /proc/get_threshold_sanity_effect_list(var/mob/living/carbon/human/subject, var/sanity_threshold)
-	var/first_affordable = 1
+	var/index = 1
 	var/list/possible = list()
 
 	//Possible future todo:
 	//Make a preliminary copy and modify it based on the subject
 
-	for (first_affordable in 1 to length(GLOB.all_sanity_effects))
-		var/requirement = GLOB.all_sanity_effects[first_affordable]
-
+	for (index in 1 to length(GLOB.all_sanity_effects))
+		var/datum/extension/sanity_effect/S = GLOB.all_sanity_effects[index]
+		var/requirement = GLOB.all_sanity_effects[S]
 
 		if (requirement < sanity_threshold)
 			//We've found one we can afford! Since they're in descending order, it means we can afford the rest of the list too
-			possible = GLOB.all_sanity_effects.Copy(first_affordable)
+			possible = GLOB.all_sanity_effects.Copy(index)
 
 
 	//Secondly, we must edit their weights a bit
