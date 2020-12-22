@@ -1,0 +1,42 @@
+<!-- 
+Title: Mind
+Used In File(s): \code\modules\sanity\mind.dm
+
+
+ 
+h1 {
+    font-size: 18px; color: #e9c183;padding: 0px;
+}
+h2 {
+    font-size: 16px; color: #e9c183;padding: 0px;
+}
+h3 {
+    font-size: 14px; color: #e9c183;padding: 0px;
+}
+ -->
+
+
+<table style="width: 100%; height: 50px; margin: 0px;">
+	<tr>
+		<td colspan = "2" style="width: 100%; border: 1px solid black; font-size: 12px; overflow: hidden; padding-left: 10px; margin: 0px; line-height: 80%;">
+			{{props data.insanity	:value:key}}
+				<div class="itemLabelNarrow">{{:key}}</div> <div class="itemContentNarrow">{{:value}}</div>
+			{{/props}}
+		</td>
+	</tr>	
+</table>
+
+
+Traumatic Memories
+<table style="width: 100%; height: 200px; margin: 0px;">
+	{{for data.log}}
+	<tr style="color: {{:value.color}};">
+		<td style="width: 90%; border: 1px solid black;padding-left: 10px;">
+			<div style="height: 10px; max-height: 50px;">{{:value.desc}}</div>
+		</td>
+		<td style="width: 10%; border: 1px solid black; padding-left: 10px;">
+			<div style="height: 10px; max-height: 50px;">{{:value.total}}</div>
+		</td>
+	</tr>	
+	{{/for}}
+</table>
