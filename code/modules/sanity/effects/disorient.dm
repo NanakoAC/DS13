@@ -16,6 +16,7 @@
 	has_client_effects = TRUE
 	trigger_duration_max = (EYECLOSE_DURATION)
 	trigger_windup_time = EYECLOSE_TIME_SLOW + 1
+	fade_duration = 5 MINUTES
 
 /datum/extension/sanity_effect/disorient/trigger_windup()
 	//Close their eyes
