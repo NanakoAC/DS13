@@ -112,6 +112,74 @@
 
 	return FALSE
 
+
+//A useful proc for events.
+//This returns a random area of the station which is meaningful. Ie, a room somewhere
+//If filter_players is true, it will only pick an area that has no human players in it
+	//This is useful for spawning, you dont want people to see things pop into existence
+//If filter_maintenance is true, maintenance areas won't be chosen
+/proc/random_ship_area(var/filter_players = FALSE, var/filter_maintenance = FALSE, var/filter_critical = FALSE)
+	var/list/possible = list()
+	for(var/Y in GLOB.ship_areas)
+		var/area/A = Y
+		if (istype(A, /area/shuttle))
+			continue
+
+		if (filter_maintenance && A.is_maintenance)
+			continue
+		/*
+		if (filter_critical && (A.flags & AREA_FLAG_CRITICAL))
+			continue
+
+		if (istype(A, /area/turret_protected))
+			continue
+		*/
+
+		if(filter_players)
+			var/should_continue = FALSE
+			for(var/mob/living/carbon/human/H in GLOB.human_mob_list)
+				if(!H.client)
+					continue
+				if(A == get_area(H))
+					should_continue = TRUE
+					break
+
+			if(should_continue)
+				continue
+
+		possible += A
+
+	return pick(possible)
+
+/area/proc/random_space()
+	var/list/turfs = list()
+	for(var/turf/simulated/floor/F in src.contents)
+		if(turf_clear(F))
+			turfs += F
+	if (turfs.len)
+		return pick(turfs)
+	else return null
+
+
+/area/proc/get_spaces()
+	var/list/turfs = list()
+	for(var/turf/simulated/floor/F in src.contents)
+		if(turf_clear(F))
+			turfs += F
+
+	return turfs
+
+
+/*
+	Simple area version of atmos unsafe that just tests the first floor tile
+	This makes the assumption that atmosphere is uniform across an area. Which is true 99% of the time.
+	If those edge cases are important, this may not be suitable
+*/
+/proc/is_area_atmos_unsafe(var/area/A)
+	for (var/turf/simulated/floor/F in A)
+		return is_turf_atmos_unsafe(F)
+	return TRUE
+
 GLOBAL_LIST_INIT(is_station_but_not_space_or_shuttle_area, list(/proc/is_station_area, /proc/is_not_space_area, /proc/is_not_shuttle_area))
 
 GLOBAL_LIST_INIT(is_contact_but_not_space_or_shuttle_area, list(/proc/is_contact_area, /proc/is_not_space_area, /proc/is_not_shuttle_area))

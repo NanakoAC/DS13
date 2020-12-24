@@ -50,7 +50,8 @@
 
 /datum/extension/sanity_effect
 	expected_type = /mob/living/carbon/human
-	base_type = /datum/extension/sanity_effect //Used for startup filtering
+	base_type = null
+	var/ancestor_type = /datum/extension/sanity_effect//Used for startup filtering
 	flags = EXTENSION_FLAG_IMMEDIATE
 
 
@@ -69,6 +70,8 @@
 	var/status = STATUS_DORMANT	//Must be one of STATUS_DORMANT, STATUS_ACTIVE, STATUS_FADING
 
 	var/instant = FALSE		//Will apply and trigger in the same frame
+
+	var/cooldown = SANITY_COOLDOWN_MINOR	//Hard minimum time after applying this effect, before another sanity check can happen
 
 
 //Applying Variables
@@ -112,7 +115,6 @@
 	var/trigger_timer_handle
 
 	//Triggering Variables
-	//TODO: Not implemented
 	var/max_trigger_instances = 1	//How many times can this trigger per application? 0 = no limit
 
 	//If true, this calls apply_client_effects when triggered, and also when the victim logs in
@@ -130,8 +132,7 @@
 	//TODO: Unimplemented
 	var/fade_duration = null
 
-	//Applying Variables
-
+	var/fade_timer_handle
 
 
 
@@ -260,6 +261,11 @@
 
 */
 /datum/extension/sanity_effect/proc/end_apply()
+
+	//Its already ended, we shouldn't be here
+	if (status == STATUS_FADING || QDELETED(src))
+		return
+
 	/*
 		If triggering is still active, we can't end yet
 	*/
@@ -270,8 +276,16 @@
 
 
 
+	if (fade_duration)
+		status == STATUS_FADING
+		fade_timer_handle = addtimer(CALLBACK(src, /datum/extension/sanity_effect/proc/end_fade), fade_duration, TIMER_STOPPABLE)
+	else
+		remove_self()
 
 
+/datum/extension/sanity_effect/proc/end_fade()
+	deltimer(fade_timer_handle)
+	remove_self()
 
 
 /*
@@ -309,6 +323,8 @@
 //don't override this directly if possible, override the procs it calls instead.
 //Add more of them as needed
 /datum/extension/sanity_effect/proc/trigger()
+	if (!isnull(max_trigger_instances))
+		max_trigger_instances--
 	status = STATUS_ACTIVE
 
 	trigger_windup()
@@ -346,7 +362,7 @@
 
 	on_end_trigger()
 
-	if (ended)
+	if (ended || (!isnull(max_trigger_instances) && max_trigger_instances <= 0))
 		end_apply()
 
 

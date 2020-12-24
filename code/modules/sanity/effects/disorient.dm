@@ -10,19 +10,19 @@
 */
 #define EYECLOSE_DURATION	3 SECONDS
 /datum/extension/sanity_effect/disorient
+	name = "Disorient"
+	clinical_name = "Transient Disorientation"
 	instant = TRUE
 	has_client_effects = TRUE
 	trigger_duration_max = (EYECLOSE_DURATION)
 	trigger_windup_time = EYECLOSE_TIME_SLOW + 1
 
 /datum/extension/sanity_effect/disorient/trigger_windup()
-	world << "Disorient trigger windup effects [subject]"
 	//Close their eyes
 	subject.close_eyes_for(EYECLOSE_DURATION, TRUE, EYECLOSE_TIME_SLOW)
 
 
 /datum/extension/sanity_effect/disorient/trigger_client_effects()
-	world << "Disorient trigger client effects"
 	var/client/C = subject.get_client()
 	if (C)
 		//Set client direction to any direction other than its current one
@@ -32,7 +32,6 @@
 
 
 /datum/extension/sanity_effect/disorient/trigger_mob_effects()
-	world << "Disorient trigger mob effects"
 	/*
 		We are going to move to a random spot we can see
 	*/
@@ -45,6 +44,7 @@
 
 
 /datum/extension/sanity_effect/disorient/on_end_trigger()
-	world << "Disorient trigger end"
 	//Cancel any walking
 	walk(subject, 0)
+
+#undef EYECLOSE_DURATION

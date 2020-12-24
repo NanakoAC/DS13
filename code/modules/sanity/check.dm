@@ -164,6 +164,10 @@
 	The effect var can either be a typepath, or a sanity effect extension
 */
 /mob/living/carbon/human/proc/apply_sanity_effect(var/effect, var/safety = TRUE)
+	var/datum/mind/M = get_mind()
+	if (!M)
+		return
+
 	//If we've been given an extension, assign it appropriately
 	var/datum/extension/sanity_effect/example
 	var/typepath
@@ -196,8 +200,11 @@
 					return FALSE
 
 	//If we are here, we've passed the safety checks, lets do this!
-	set_extension(src, typepath)	//Boom, done
-	return TRUE
+	var/datum/extension/sanity_effect/SE = set_extension(src, typepath)	//Boom, done
+
+	//Set the next allowed sanity check cooldown, using the larger of two possibilities
+	M.next_sanity_check = max(M.next_sanity_check+SE.cooldown, world.time +SE.cooldown)
+	return SE
 
 
 
@@ -212,6 +219,7 @@
 	//Possible future todo:
 	//Make a preliminary copy and modify it based on the subject
 
+
 	for (index in 1 to length(GLOB.all_sanity_effects))
 		var/datum/extension/sanity_effect/S = GLOB.all_sanity_effects[index]
 		var/requirement = GLOB.all_sanity_effects[S]
@@ -219,7 +227,7 @@
 		if (requirement < sanity_threshold)
 			//We've found one we can afford! Since they're in descending order, it means we can afford the rest of the list too
 			possible = GLOB.all_sanity_effects.Copy(index)
-
+			break
 
 	//Secondly, we must edit their weights a bit
 	//The weight of each effect is equal to 1 + (0.01* minimum insanity)

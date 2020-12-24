@@ -14,6 +14,7 @@
 
 		return
 
+
 	if (client.temp_view != world.view)
 		rescale = TRUE
 

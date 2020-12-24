@@ -696,3 +696,33 @@ proc
 
 
 	return secondary_candidates
+
+
+
+/*
+	Checks whether this atom is visible to any players with certain filters
+*/
+/atom/proc/is_seen(var/count_necromorphs = TRUE, var/count_crew = TRUE, var/count_nonhuman = TRUE, var/count_ghosts = FALSE)
+	var/list/viewers = get_viewers(10, /mob)
+
+	//Dont see yourself
+	viewers -= src
+
+	if (!viewers.len)
+		return FALSE
+
+	for (var/mob/M as anything in viewers)
+		var/necro = M.is_necromorph()
+		if (count_necromorphs && necro)
+			return TRUE
+
+		if (count_crew && !necro && ishuman(M))
+			return TRUE
+
+		if (count_ghosts && isghost(M))
+			return TRUE
+
+		if (count_nonhuman && isliving(M) && !ishuman(M))
+			return TRUE
+
+	return FALSE
