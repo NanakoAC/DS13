@@ -99,6 +99,8 @@
 	//Just tracks a timer handle so it can be stopped manually in case of early termination
 	var/apply_timer_handle
 
+	//If true, process while in a dormant state
+	var/process_while_dormant = FALSE
 
 //Triggering Variables
 //---------------------
@@ -123,6 +125,10 @@
 	//If true, this calls apply_mob_effects when triggered
 	var/has_mob_effects = TRUE
 
+
+	//If true, process while in an active state
+	//Completely ignored if process_while_dormant is true
+	var/process_while_active = FALSE
 
 //Fading Variables
 //---------------------
@@ -253,6 +259,8 @@
 		apply_duration = rand_between(apply_duration_min, apply_duration_max)
 
 	apply_timer_handle = addtimer(CALLBACK(src, /datum/extension/sanity_effect/proc/end_apply), apply_duration, TIMER_STOPPABLE)
+	if (process_while_dormant)
+		start_processing()
 
 
 
@@ -287,6 +295,16 @@
 	deltimer(fade_timer_handle)
 	remove_self()
 
+
+/datum/extension/sanity_effect/proc/start_processing()
+	if (is_processing)
+		return
+
+	//TODO: Allow selecting which subsystem to use
+	START_PROCESSING(SSobj, src)
+
+
+/datum/extension/sanity_effect/proc/stop_processing()
 
 /*
 	Triggering
