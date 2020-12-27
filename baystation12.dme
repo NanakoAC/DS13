@@ -2686,6 +2686,7 @@
 #include "code\modules\sanity\effects\travelling_blackout.dm"
 #include "code\modules\sanity\effects\wrong_door.dm"
 #include "code\modules\sanity\effects\compulsion\_compulsion.dm"
+#include "code\modules\sanity\effects\compulsion\claustrophobia.dm"
 #include "code\modules\sanity\passive\active_scan.dm"
 #include "code\modules\sanity\passive\active_scan_mob.dm"
 #include "code\modules\sanity\passive\passive_scan.dm"

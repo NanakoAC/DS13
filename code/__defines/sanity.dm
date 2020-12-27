@@ -11,9 +11,9 @@
 
 //Compulsion progress ticks. How fast they decay towards failure when ignored
 //These values are based on the assumption of a common 20 minute duration
-#define COMPULSION_PROGRESS_SLOW	0.111	//15 minutes to reach 100
-#define COMPULSION_PROGRESS_MED		0.222	//10 minutes to reach 100
-#define COMPULSION_PROGRESS_FAST	0.333	//5 minutes to reach 100
+#define COMPULSION_PROGRESS_SLOW	-0.111	//15 minutes to reach -100
+#define COMPULSION_PROGRESS_MED		-0.222	//10 minutes to reach -100
+#define COMPULSION_PROGRESS_FAST	-0.333	//5 minutes to reach -100
 
 //Each point of sanity adds this percentage chance of getting an effect, at each check. 100% at 1000
 #define SANITY_PROBABILITY_FACTOR	0.1

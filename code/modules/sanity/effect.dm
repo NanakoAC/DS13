@@ -74,6 +74,8 @@
 	var/cooldown = SANITY_COOLDOWN_MINOR	//Hard minimum time after applying this effect, before another sanity check can happen
 
 
+	var/ticks	//How many process ticks we've had
+
 //Applying Variables
 //---------------------------
 	//If this has been applied to this mob at least once already in this round, we return this instead of ideal.
@@ -195,7 +197,9 @@
 
 
 
-
+/*
+	Core Procs
+*/
 /datum/extension/sanity_effect/New(var/datum/holder)
 	//Pass this special parameter in to tell the sanity effect that its not getting a holder and should not initialize
 	if (holder == REFERENCE)
@@ -221,7 +225,9 @@
 		attempt_trigger()
 
 
-
+/datum/extension/sanity_effect/proc/Destroy()
+	stop_processing()
+	.=..()
 /*
 	Safety Checks. Both of these must return one of the following
 	CHECK_NEVER
@@ -230,6 +236,24 @@
 	CHECK_PREVENTED
 	CHECK_IDEAL
 */
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/*
+	Applying Procs
+*/
+
 /*
 	Can this be applied to the target mob?
 	If this returns
@@ -274,15 +298,18 @@
 	if (status == STATUS_FADING || QDELETED(src))
 		return
 
+	//We are theoretically done, mark us as so
+	ended = TRUE
+
 	/*
 		If triggering is still active, we can't end yet
+		Trigger will call end_apply again when its ready
 	*/
 	if (status == STATUS_ACTIVE)
-		//Set this flag so that this proc will be called again when trigger ends
-		ended = TRUE
 		return
 
-
+	//We definitely dont process while fading
+	stop_processing()
 
 	if (fade_duration)
 		status == STATUS_FADING
@@ -296,6 +323,14 @@
 	remove_self()
 
 
+
+
+
+/datum/extension/sanity_effect/Process()
+	ticks++
+	if (can_stop_processing())
+		return PROCESS_KILL
+
 /datum/extension/sanity_effect/proc/start_processing()
 	if (is_processing)
 		return
@@ -305,6 +340,18 @@
 
 
 /datum/extension/sanity_effect/proc/stop_processing()
+	terminate_processing()
+
+
+
+
+
+
+
+
+
+
+
 
 /*
 	Triggering
@@ -350,6 +397,9 @@
 	if (trigger_windup_time)
 		sleep(trigger_windup_time)
 
+	if (process_while_active && !process_while_dormant)
+		start_processing()
+
 	if (has_client_effects)
 		//Apply client effects and setup a call to reapply them later
 		if (!GLOB.logged_in_event.is_listening(holder, src, /datum/extension/sanity_effect/proc/trigger_client_effects))
@@ -378,10 +428,16 @@
 
 	status = STATUS_DORMANT
 
+	if (process_while_active && !process_while_dormant)
+		stop_processing()
+
 	on_end_trigger()
 
 	if (ended || (!isnull(max_trigger_instances) && max_trigger_instances <= 0))
 		end_apply()
+
+
+
 
 
 /*

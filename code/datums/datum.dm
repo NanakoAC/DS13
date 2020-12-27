@@ -30,3 +30,10 @@
 /datum/proc/Process()
 	set waitfor = 0
 	return PROCESS_KILL
+
+
+/datum/proc/terminate_processing()
+	if (is_processing)
+		var/datum/controller/subsystem/processing/P = processing_subsystems_by_varname[is_processing]
+		if (P)
+			STOP_PROCESSING(P, src)
