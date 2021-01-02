@@ -1,3 +1,6 @@
+/mob
+	var/list/sanity_effects()
+
 /mob/proc/get_insanity(var/include_resolve, var/include_reserve)
 	return 0
 

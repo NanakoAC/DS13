@@ -53,6 +53,22 @@
 	var/message_neutral_end = list("I feel numb",  "I suppose things could have gone worse")
 
 
+
+/datum/extension/sanity_effect/compulsion/can_apply(var/mob/living/carbon/human/victim)
+	.=..()
+	if (. > CHECK_INVALID)
+		var/existing_compulsions = 0
+		//To prevent things getting too silly, there is a cap on the number of compulsion effects a mob can suffer from at once
+		for (var/datum/extension/sanity_effect/compulsion/C in victim.sanity_effects)
+
+			//Fading effects don't count
+			if (C.status == STATUS_FADING)
+				continue
+
+			existing_compulsions++
+		if (existing_compulsions >= (COMPULSION_LIMIT - 1))
+			return CHECK_INVALID
+
 /datum/extension/sanity_effect/compulsion/Process()
 	.=..()
 	change_progress(progress_tick)

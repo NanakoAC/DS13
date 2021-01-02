@@ -206,6 +206,8 @@
 		reference = TRUE
 		return
 
+
+
 	..()
 
 	Initialize(arglist(args))
@@ -217,7 +219,7 @@
 /datum/extension/sanity_effect/proc/Initialize()
 	.=..()
 	subject = holder
-
+	subject.sanity_effects |= src
 	applied()
 
 	//Even though safety checks were done, we redo them anyways in the case of CHECK_PREVENTED
@@ -226,6 +228,7 @@
 
 
 /datum/extension/sanity_effect/proc/Destroy()
+	subject.sanity_effects -= src
 	stop_processing()
 	.=..()
 /*

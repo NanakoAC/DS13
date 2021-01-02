@@ -9,6 +9,10 @@
 #define SANITY_RESERVE_MAJOR		250
 #define SANITY_RESERVE_CRITICAL	400
 
+
+//To prevent things getting too silly, there is a cap on the number of compulsion effects a mob can suffer from at once
+#define COMPULSION_LIMIT	3
+
 //Compulsion progress ticks. How fast they decay towards failure when ignored
 //These values are based on the assumption of a common 20 minute duration
 #define COMPULSION_PROGRESS_SLOW	-0.111	//15 minutes to reach -100
