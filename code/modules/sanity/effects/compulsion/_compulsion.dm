@@ -126,3 +126,20 @@
 	next_progress_message = world.time + progress_message_interval
 	var/message = span(spanclass, pick(messages))
 	to_chat(subject, message)
+
+
+
+/*
+	Overrideable Procs
+*/
+
+//Called periodically to do whatever spooky logic you want, to check if the user is doing well
+/datum/extension/sanity_effect/compulsion/proc/check_progress()
+
+
+/*
+	Endings
+*/
+/datum/extension/sanity_effect/compulsion/proc/bad_end()
+
+/datum/extension/sanity_effect/compulsion/proc/good_end()

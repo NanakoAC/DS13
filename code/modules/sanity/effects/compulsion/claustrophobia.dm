@@ -16,6 +16,8 @@
 */
 
 /datum/extension/sanity_effect/compulsion/claustrophobia
+	name = "Claustrophobia"
+	clinical_name = "Claustrophobia"
 	/*
 		This is roughly half of 169, which is the number of tiles onscreen with a 6 view range
 	*/
@@ -24,11 +26,35 @@
 	//Wearing a helmet that covers your face is pretty claustrophobic
 	var/helmet_penalty = -15
 
+	//Hiding inside a locker, or similar object, causes a huge penalty
+	var/contained_penalty = -40
+
 	//We gain or lose this many points of progress, per point of space, per check
 	var/progress_per_point = 0.05
 
 	//Your vision radius is reduced
-	statmods = list(STATMOD_VISION_RANGE = -1)
+	statmods = list(STATMOD_VIEW_RANGE = -1)
+
+	progress_message_interval = 50 SECONDS
+
+	message_progress_negative = list("The walls are closing in!",
+	 "This place is so dark and oppressive.",
+	 "I feel like I can't breathe in here, I need to get some space",
+	 "Gotta get out. Gotta get out. GOTTA GET OUT!",
+	 "Will I ever see the stars again?",
+	 "Will I ever stand under an open sky again?",
+	 "Am I doomed to die in this cramped iron box?",
+	 "It's too cramped around here.",
+	 "I should find a window, I want to see the stars",
+	 "I need room to breathe.")
+
+	message_progress_positive = list("Finally, room to stretch, and breathe!",
+	 "It's so light and airy here, I never want to leave!",
+	 "Deep breaths, I'm okay now...",
+	 "The stars are so pretty tonight",
+	 "This is good, just got to stay in an open area.")
+
+
 
 
 /datum/extension/sanity_effect/compulsion/claustrophobia/check_progress()
@@ -42,6 +68,10 @@
 		if (prob(40))
 			to_chat(subject, "This [facecovering] is stifling, I should really take it off")
 		score += helmet_penalty
+
+
+	if (!istype(subject.loc, /turf))
+		score += contained_penalty
 
 
 	//We will batch all positive gains, to multiply them later
@@ -80,10 +110,14 @@
 
 	//Here we have the final score, now
 	score += positive_subtotal
-
+	world << "Score is [score]"
 	var/progress_change = score * progress_per_point
 
 	change_progress(progress_change)
+
+	//Darken the screen edges if you're in a claustrophobic area
+	subject.set_fullscreen((progress_change < 0),"vignette", /obj/screen/fullscreen/fishbed)
+
 
 	//If we are not currently outside, but we can see an outside turf, we are filled with a longing to go out there
 	if (!external && seen_external)

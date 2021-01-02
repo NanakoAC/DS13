@@ -14,8 +14,9 @@
 	if (statmods && auto_register_statmods)
 		register_statmods()
 
+
 /datum/extension/proc/remove_self()
-	remove_extension(holder, base_type)
+	remove_extension(holder, (base_type ? base_type : type))
 
 /datum/extension/Destroy()
 	if (statmods)
@@ -97,6 +98,3 @@
 		qdel(source.extensions[base_type])
 	LAZYREMOVE(source.extensions, base_type)
 
-
-/datum/extension/proc/remove_self()
-	remove_extension(holder, (base_type ? base_type : type))

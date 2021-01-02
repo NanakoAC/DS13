@@ -106,6 +106,7 @@
 	var/severity = 0
 	var/allstate = 0 //shows if it should show up for dead people too
 	var/mob/owner
+	layer = FULLSCREEN_LAYER
 
 /obj/screen/fullscreen/proc/set_size(var/client/C)
 	//Here we select (and if needed, generate) the icon for the right size

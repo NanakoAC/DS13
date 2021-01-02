@@ -219,7 +219,7 @@
 /datum/extension/sanity_effect/proc/Initialize()
 	.=..()
 	subject = holder
-	subject.sanity_effects |= src
+	LAZYADD(subject.sanity_effects, src)
 	applied()
 
 	//Even though safety checks were done, we redo them anyways in the case of CHECK_PREVENTED
@@ -227,8 +227,8 @@
 		attempt_trigger()
 
 
-/datum/extension/sanity_effect/proc/Destroy()
-	subject.sanity_effects -= src
+/datum/extension/sanity_effect/Destroy()
+	LAZYREMOVE(subject.sanity_effects, src)
 	stop_processing()
 	.=..()
 /*
@@ -315,7 +315,7 @@
 	stop_processing()
 
 	if (fade_duration)
-		status == STATUS_FADING
+		status = STATUS_FADING
 		fade_timer_handle = addtimer(CALLBACK(src, /datum/extension/sanity_effect/proc/end_fade), fade_duration, TIMER_STOPPABLE)
 	else
 		remove_self()
